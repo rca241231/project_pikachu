@@ -18,7 +18,14 @@ class Scraper(Scrape):
         self.bls_url = "https://beta.bls.gov/maps/cew/CA?industry=10&geo_id=06000&chartData=3&distribution=Quantiles&pos_color=blue&neg_color=orange&showHideChart=show&ownerType=0"
         self.county_info = county.get_employment_info(self.bls_url)
         self.search = SearchEngine(simple_zipcode=True)
-        self.cookies = {
+        self.options = Options()
+        self.options.add_argument("--headless")
+        self.options.add_argument("--no-sandbox")
+        self.options.add_argument("--disable-dev-shm-usage")
+        self.driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=self.options)
+
+        # TODO: If new location, change the following
+        self.redfin_cookies = {
             'RF_BROWSER_ID': '0p30zjCWSwamY2Y68psP2g',
             '_gcl_au': '1.1.2133428028.1568202210',
             '_ga': 'GA1.2.1022811260.1568202210',
@@ -56,7 +63,7 @@ class Scraper(Scrape):
             '_gat_UA-294985-1': '1',
             'unifiedLastSearch': 'name%3DAlameda%2520County%26subName%3DCA%252C%2520USA%26url%3D%252Fcounty%252F303%252FCA%252FAlameda-County%26id%3D9_303%26type%3D5%26isSavedSearch%3D%26countryCode%3DUS',
         }
-        self.headers = {
+        self.redfin_headers = {
             'sec-fetch-mode': 'cors',
             'x-newrelic-id': 'VQMDUFFaGwQJU1hSBAc=',
             'dnt': '1',
@@ -68,7 +75,7 @@ class Scraper(Scrape):
             'authority': 'www.redfin.com',
             'sec-fetch-site': 'same-origin',
         }
-        self.params = (
+        self.redfin_params = (
             ('al', '3'),
             ('market', 'sanfrancisco'),
             ('max_price', '1250000'),
@@ -95,46 +102,42 @@ class Scraper(Scrape):
         }
 
     def fetch_data(self):
-        options = Options()
-        options.add_argument("--headless")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=options)
-        response = json.loads(requests.get('https://www.redfin.com/stingray/api/gis', headers=self.headers, params=self.params, cookies=self.cookies).text.replace('{}&&', ''))
+        response = json.loads(requests.get('https://www.redfin.com/stingray/api/gis', headers=self.redfin_headers, params=self.redfin_params, cookies=self.redfin_cookies).text.replace('{}&&', ''))
         houses = response['payload']['homes']
 
         for house in houses:
             try:
                 url = 'https://www.redfin.com' + house['url']
-
                 print(f"Getting data for {url}")
+                self.driver.get(url)
 
-                driver.get(url)
-
+                # Get information from Redfin
                 street_address = house['streetLine']['value']
-                city = driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
-                state = driver.find_element_by_css_selector('span.citystatezip > span.region').get_attribute('textContent')
-                zip_code = driver.find_element_by_css_selector('span.citystatezip > span.postal-code').get_attribute('textContent')
+                city = self.driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
+                state = self.driver.find_element_by_css_selector('span.citystatezip > span.region').get_attribute('textContent')
+                zip_code = self.driver.find_element_by_css_selector('span.citystatezip > span.postal-code').get_attribute('textContent')
                 listed_price = house['price']['value']
                 beds = house['beds']
                 baths = house['baths']
-                monthly_expense = driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
+                monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
                 schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
                 year_build = house['yearBuilt']['value']
                 lot_size = house['lotSize']['value']
 
+                # Get information from AirDNA
                 params = (
                     ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
                     ('city_id', '59193'),
                     ('currency', 'native'),
                     ('address', f"{street_address}, {city}, CA, USA"),
                 )
-
                 response = requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).json()
                 nightly_price = response['property_stats']['adr']['ltm']
                 occupancy_rate = response['property_stats']['occupancy']['ltm']
                 revenue = response['property_stats']['revenue']['ltm']
                 monthly_profit = float(revenue)/12 - float(monthly_expense)
+
+                # Get locality employment information
                 zipcode = self.search.by_zipcode(zip_code)
                 employment_total_covered = self.county_info[zipcode.county]['employment_total_covered']
                 twelve_month_change_pct = self.county_info[zipcode.county]['twelve_month_change_pct']
@@ -170,7 +173,7 @@ class Scraper(Scrape):
             except:
                 pass
 
-        driver.quit()
+        self.driver.quit()
 
 scrape = Scraper()
 scrape.scrape()
