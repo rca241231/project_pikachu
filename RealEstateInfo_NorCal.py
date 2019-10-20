@@ -14,8 +14,6 @@ class Scraper(Scrape):
         Scrape.__init__(self)
         county = CountyInfo()
         self.data = []
-        self.seen = []
-        self.county_info = county.get_employment_info(self.bls_url)
         self.search = SearchEngine(simple_zipcode=True)
         self.options = Options()
         self.options.add_argument("--headless")
@@ -25,6 +23,7 @@ class Scraper(Scrape):
 
         # TODO: If new location, change the following
         self.bls_url = "https://beta.bls.gov/maps/cew/CA?industry=10&geo_id=06000&chartData=3&distribution=Quantiles&pos_color=blue&neg_color=orange&showHideChart=show&ownerType=0"
+        self.county_info = county.get_employment_info(self.bls_url)
         self.redfin_cookies = {
             'RF_BROWSER_ID': '0p30zjCWSwamY2Y68psP2g',
             '_gcl_au': '1.1.2133428028.1568202210',
@@ -106,72 +105,76 @@ class Scraper(Scrape):
         houses = response['payload']['homes']
 
         for house in houses:
-            try:
-                url = 'https://www.redfin.com' + house['url']
-                self.driver.get(url)
-                print(f"Getting data for {url}")
-                
-                # Get information from Redfin
-                street_address = house['streetLine']['value']
-                city = self.driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
-                state = self.driver.find_element_by_css_selector('span.citystatezip > span.region').get_attribute('textContent')
-                zip_code = self.driver.find_element_by_css_selector('span.citystatezip > span.postal-code').get_attribute('textContent')
-                listed_price = house['price']['value']
-                beds = house['beds']
-                baths = house['baths']
-                monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
-                schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
-                year_build = house['yearBuilt']['value']
-                lot_size = house['lotSize']['value']
+            url = 'https://www.redfin.com' + house['url']
+            self.driver.get(url)
+            print(f"Getting data for {url}")
 
-                # Get information from AirDNA
-                params = (
-                    ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
-                    ('city_id', '59193'),
-                    ('currency', 'native'),
-                    ('address', f"{street_address}, {city}, CA, USA"),
-                )
-                response = requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).json()
+            # Get information from Redfin
+            street_address = house['streetLine']['value']
+            city = self.driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
+            state = self.driver.find_element_by_css_selector('span.citystatezip > span.region').get_attribute('textContent')
+            zip_code = self.driver.find_element_by_css_selector('span.citystatezip > span.postal-code').get_attribute('textContent')
+            listed_price = house['price']['value']
+            beds = house['beds']
+            baths = house['baths']
+            monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
+            schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in self.driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
+            year_build = house['yearBuilt']['value']
+            lot_size = house['lotSize']['value']
+
+            # Get information from AirDNA
+            params = (
+                ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
+                ('city_id', '59193'),
+                ('currency', 'native'),
+                ('address', f"{street_address}, {city}, CA, USA"),
+            )
+            response = requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).json()
+
+            if 'property_details' not in response.keys():
+                nightly_price = 'N/A'
+                occupancy_rate = 'N/A'
+                revenue = 'N/A'
+                monthly_profit = 'N/A'
+            else:
                 nightly_price = response['property_stats']['adr']['ltm']
                 occupancy_rate = response['property_stats']['occupancy']['ltm']
                 revenue = response['property_stats']['revenue']['ltm']
                 monthly_profit = float(revenue)/12 - float(monthly_expense)
 
-                # Get locality employment information
-                zipcode = self.search.by_zipcode(zip_code)
-                employment_total_covered = self.county_info[zipcode.county]['employment_total_covered']
-                twelve_month_change_pct = self.county_info[zipcode.county]['twelve_month_change_pct']
-                twelve_month_change = self.county_info[zipcode.county]['twelve_month_change']
-                avg_weekly_salary = self.county_info[zipcode.county]['avg_weekly_salary']
-                avg_weekly_12mo_change_salary = self.county_info[zipcode.county]['avg_weekly_12mo_change_salary']
+            # Get locality employment information
+            county = self.search.by_zipcode(zip_code).county
+            employment_total_covered = self.county_info[county]['employment_total_covered']
+            twelve_month_change_pct = self.county_info[county]['twelve_month_change_pct']
+            twelve_month_change = self.county_info[county]['twelve_month_change']
+            avg_weekly_salary = self.county_info[county]['avg_weekly_salary']
+            avg_weekly_12mo_change_salary = self.county_info[county]['avg_weekly_12mo_change_salary']
 
-                self.data.append(
-                    [
-                        url,
-                        street_address,
-                        city,
-                        state,
-                        zip_code,
-                        listed_price,
-                        beds,
-                        baths,
-                        monthly_expense,
-                        nightly_price,
-                        occupancy_rate,
-                        revenue,
-                        schools,
-                        year_build,
-                        lot_size,
-                        employment_total_covered,
-                        twelve_month_change_pct,
-                        twelve_month_change,
-                        avg_weekly_salary,
-                        avg_weekly_12mo_change_salary,
-                        monthly_profit,
-                    ]
-                )
-            except:
-                pass
+            self.data.append(
+                [
+                    url,
+                    street_address,
+                    city,
+                    state,
+                    zip_code,
+                    listed_price,
+                    beds,
+                    baths,
+                    monthly_expense,
+                    nightly_price,
+                    occupancy_rate,
+                    revenue,
+                    schools,
+                    year_build,
+                    lot_size,
+                    employment_total_covered,
+                    twelve_month_change_pct,
+                    twelve_month_change,
+                    avg_weekly_salary,
+                    avg_weekly_12mo_change_salary,
+                    monthly_profit,
+                ]
+            )
 
         self.driver.quit()
 
