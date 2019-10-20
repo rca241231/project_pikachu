@@ -21,6 +21,11 @@ class Scraper(Scrape):
         self.options.add_argument("--disable-dev-shm-usage")
         self.driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=self.options)
 
+        # Specification on the house
+        self.beds = '5'
+        self.max_price = '1250000'
+        self.baths = '3'
+
         # TODO: If new location, change the following
         self.bls_url = "https://beta.bls.gov/maps/cew/CA?industry=10&geo_id=06000&chartData=3&distribution=Quantiles&pos_color=blue&neg_color=orange&showHideChart=show&ownerType=0"
         self.county_info = county.get_employment_info(self.bls_url)
@@ -77,10 +82,10 @@ class Scraper(Scrape):
         self.redfin_params = (
             ('al', '3'),
             ('market', 'sanfrancisco'),
-            ('max_price', '1250000'),
+            ('max_price', self.max_price),
             ('min_stories', '1'),
-            ('num_beds', '5'),
-            ('num_baths', '3'),
+            ('num_beds', self.beds),
+            ('num_baths', self.baths),
             ('num_homes', '10000'),
             ('ord', 'redfin-recommended-asc'),
             ('page_number', '1'),
