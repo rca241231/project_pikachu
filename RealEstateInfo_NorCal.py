@@ -15,7 +15,6 @@ class Scraper(Scrape):
         county = CountyInfo()
         self.data = []
         self.seen = []
-        self.bls_url = "https://beta.bls.gov/maps/cew/CA?industry=10&geo_id=06000&chartData=3&distribution=Quantiles&pos_color=blue&neg_color=orange&showHideChart=show&ownerType=0"
         self.county_info = county.get_employment_info(self.bls_url)
         self.search = SearchEngine(simple_zipcode=True)
         self.options = Options()
@@ -25,6 +24,7 @@ class Scraper(Scrape):
         self.driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=self.options)
 
         # TODO: If new location, change the following
+        self.bls_url = "https://beta.bls.gov/maps/cew/CA?industry=10&geo_id=06000&chartData=3&distribution=Quantiles&pos_color=blue&neg_color=orange&showHideChart=show&ownerType=0"
         self.redfin_cookies = {
             'RF_BROWSER_ID': '0p30zjCWSwamY2Y68psP2g',
             '_gcl_au': '1.1.2133428028.1568202210',
@@ -108,9 +108,9 @@ class Scraper(Scrape):
         for house in houses:
             try:
                 url = 'https://www.redfin.com' + house['url']
-                print(f"Getting data for {url}")
                 self.driver.get(url)
-
+                print(f"Getting data for {url}")
+                
                 # Get information from Redfin
                 street_address = house['streetLine']['value']
                 city = self.driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
