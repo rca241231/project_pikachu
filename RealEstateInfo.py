@@ -48,15 +48,14 @@ class Scraper(Scrape):
             'AKA_A2': 'A',
             'AMP_TOKEN': '%24NOT_FOUND',
             'nhfy_badgecount': '20',
-            'RF_LISTING_VIEWS': '112200998.111971925.112814555.111078864.113153741.113357034.112572946.111958975.112339817.112405158.112408910.110142814.113173890.112924556.81198215.112809087.112927527.111911401.110623683.94780200',
-            '_dc_gtm_UA-294985-1': '1',
-            '_gat_UA-294985-1': '1',
-            'unifiedLastSearch': 'name%3D94587%26subName%3DCA%252C%2520USA%26url%3D%252Fzipcode%252F94587%26id%3D9_39234%26type%3D4%26isSavedSearch%3D%26countryCode%3DUS',
+            'RF_LISTING_VIEWS': '112839118.112200998.111971925.112814555.111078864.113153741.113357034.112572946.111958975.112339817.112405158.112408910.110142814.113173890.112924556.81198215.112809087.112927527.111911401.110623683',
             'RF_VISITED': 'null',
-            'userPreferences': 'parcels%3Dtrue%26schools%3Dfalse%26mapStyle%3Ds%26statistics%3Dtrue%26agcTooltip%3Dfalse%26agentReset%3Dfalse%26ldpRegister%3Dfalse%26afCard%3D2%26schoolType%3D0%26lastSeenLdp%3DnoSharedSearchCookie%26viewedSwipeableHomeCardsDate%3D1571594953149',
-            'fbsr_161006757273279': 'POpWr1ot9SHRl_3SVlcT2JcqL1idzasaOhs7hyr8xEo.eyJ1c2VyX2lkIjoiNTA0NDMzNzY1IiwiY29kZSI6IkFRQW8yR3VxSHhiMERvbHBBdmJBbG4wcW9Yb2VVWVhsTzdfeWFRcDVfWVZqeGNCVzVxVjdFSnhUV3lkQkp4TW4tTjBlNWJ3VlEtRUxEeG9vNU0zZ1Fsbkg3aFlUU0FFUmNIUU5leThrTGJpa0Zyd1hIYzdRczFCMHBsdmRtZzhCaUJ3RlpHNW5YdVo2VDBpenpLRkpvcnVoTU9hQXJZdGo5NjNYaThFV0R2b1Bwd0daRURFUGRGVS1aOE01X2M2MEsyWnViOEpZZTVXNnloZF9zalBRQjQzTV82Uzh0Z1A0cWtWdUNlSUVoSFBCaF9VYWZfUTdCc0FMV0E3WFc5cjdjeWpyQ2NxTFlqZTJTc1BfOXRPUm95eUdKT3VaYXBTdk4tVWZRb3BJWDNqRmdLYTRyU0htaUoyVkhCWS01Q2RyVURzSnBnRjNMdE1rSEZRMWlmdjNWY2xwTFdfU3dBaGNaSzUwZmhmc1pCUEhUWHMySERiLUpyajRpLTJNTVBXYU5wMCIsIm9hdXRoX3Rva2VuIjoiRUFBQ1NiMDZTM3I4QkFJWkJFZnNyVDlFck13ekdaQUN2WEtPdGdaQnp6b2RxNGtMWkEwVE9HRVpBU1dSNHFxZEpIR000bUVmYmRjVW5lTFpCMnVMSGhaQmh3dFBndWJNazY0bVpCS1ZyTEtKMTQyalJoZnF0WkJ3cjNFcGt1aUVuSWFaQk1jc3ZaQldCZFlZQUZxZkZWUW14Y04yWkE5c012Vzk5dlZkbVpDSG9CdmRKaXpYQ3VRclNITHNLc1pBMkZBVkRMcm5mUTBaQllaQk9JdkZnY1pCTjBOc0oyRENRRCIsImFsZ29yaXRobSI6IkhNQUMtU0hBMjU2IiwiaXNzdWVkX2F0IjoxNTcxNTk0OTUzfQ',
-            'RF_LAST_SEARCHED_CITY': 'Union%20City',
-            '__utmxx': '222895640.WTKnaAxUS8WuBy9wsrWkyg$0:1571278253:8035200:.uxw2gydsRRWC574IItzZJA$0:1568202211:8035200:.RTV_wZVsTh-aCSuerdlYSQ$0:1568742846:8035200:.Y2CmQl1SEm4efihwuTldA$0:1571594874:8035200:.DPiVULlyQUmf2VSSZa1iIg$0:1571594953:8035200.HPaeM5zMSp-5hxCpNhjEDg$0:1571514351:8035200:.Be2giBqURYSxBB66d5SfcQ$0:1570826559:8035200:',
+            'userPreferences': 'parcels%3Dtrue%26schools%3Dfalse%26mapStyle%3Ds%26statistics%3Dtrue%26agcTooltip%3Dfalse%26agentReset%3Dfalse%26ldpRegister%3Dfalse%26afCard%3D2%26schoolType%3D0%26lastSeenLdp%3DnoSharedSearchCookie%26viewedSwipeableHomeCardsDate%3D1571595481892',
+            'fbsr_161006757273279': 'PSBLw8aAWcoDGhAtbedHziNIng03R43lza2vyYqYHew.eyJ1c2VyX2lkIjoiNTA0NDMzNzY1IiwiY29kZSI6IkFRRHRKRE1zaHEyWGZqZTZpQWVYM2VmNnZGcUVrZ3Y1S2Jocm9mMWNmamdyczhtMlBtcUtzQUJ4dmdjcjJNUHZXTGRjTFlXLVJNMkFDZHhsZzVhNlhqdzJNbFBUYWs5WFRxNzEyU3g1UDZuQ3ZCSERaSzdiaU1mbjNzX180UzdfMmhYc2RaZGcxcHBfMDVVb3lVdVl1ZF8ydjk2VkhIdUJkY3RkSHNjcUY0US03S2h0UlNOU2RKa2VnM3RBVEVhN2p6VlJLeFJ1VVRSb2RPUi1QNUg2Wkh2dF9GWnNtOVdmVGtiZFRCNXUxYnREUlhBcFV0bl81WVE1MC1JWnZLUVh0TnhxWWJ1eno5VTZDeTVfMGFhM1VsSmQyMFpzVG5mejI2ZTFCbENlVi1xSFEzOUJBSEhTTi1jRmdQbDBxeE5Uby02MDFOXzZiQko1OHM3b2JrNkkxVktzQmpmeVJHWmdBeVpQcFNTYWFtMWp5dzROR1hmRWZzRFR5c0ZkRzYydWtqOCIsIm9hdXRoX3Rva2VuIjoiRUFBQ1NiMDZTM3I4QkFJcFVXNEt1MFFCWkI0Q1pCYjE0UFZYUldXNGxUUVlCZzZQOTU4aWVYWkFxUTFDTlF5VnAyUDlaQVNmY0VEV2xaQlpCNWkxRjhBUnNFMGFWTGtySnJha3BJZUtCWkEwNTdpYXRDbDhjdHdmcFZlQ2J0eEc2dFpDYzJmaTdTWGp5bnBaQTFUdFc2OVREcDhCWkFvektnWTFQMlFwN0VZMjBDbTA2WkN3T1NNU2N2N1pDSVZGZHhKamZNOVBTWkE4SXA3R1RVWkN6ajRwNHNyUnpUQiIsImFsZ29yaXRobSI6IkhNQUMtU0hBMjU2IiwiaXNzdWVkX2F0IjoxNTcxNTk1NDgyfQ',
+            'RF_LAST_SEARCHED_CITY': 'San%20Jose',
+            '__utmxx': '222895640.WTKnaAxUS8WuBy9wsrWkyg$0:1571278253:8035200:.uxw2gydsRRWC574IItzZJA$0:1568202211:8035200:.RTV_wZVsTh-aCSuerdlYSQ$0:1568742846:8035200:.Y2CmQl1SEm4efihwuTldA$0:1571595289:8035200:.DPiVULlyQUmf2VSSZa1iIg$0:1571595482:8035200.HPaeM5zMSp-5hxCpNhjEDg$0:1571514351:8035200:.Be2giBqURYSxBB66d5SfcQ$0:1570826559:8035200:',
+            '_gat_UA-294985-1': '1',
+            'unifiedLastSearch': 'name%3DAlameda%2520County%26subName%3DCA%252C%2520USA%26url%3D%252Fcounty%252F303%252FCA%252FAlameda-County%26id%3D9_303%26type%3D5%26isSavedSearch%3D%26countryCode%3DUS',
         }
 
         headers = {
@@ -67,7 +66,7 @@ class Scraper(Scrape):
             'accept-language': 'en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7',
             'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
             'accept': '*/*',
-            'referer': 'https://www.redfin.com/zipcode/94587/filter/max-price=1.25M,min-beds=5,min-baths=3,viewport=37.6259:37.5617:-122.02162:-122.52974,no-outline',
+            'referer': 'https://www.redfin.com/county/303/CA/Alameda-County/filter/max-price=1.25M,min-beds=5,mr=5:345+5:343+6:17151',
             'authority': 'www.redfin.com',
             'sec-fetch-site': 'same-origin',
         }
@@ -77,18 +76,17 @@ class Scraper(Scrape):
             ('market', 'sanfrancisco'),
             ('max_price', '1250000'),
             ('min_stories', '1'),
-            ('num_baths', '3'),
             ('num_beds', '5'),
             ('num_homes', '350'),
             ('ord', 'redfin-recommended-asc'),
             ('page_number', '1'),
-            ('poly', '-122.7838 37.52686,-121.76756 37.52686,-121.76756 37.65526,-122.7838 37.65526,-122.7838 37.52686'),
+            ('region_id', '345,343,17151,303'),
+            ('region_type', '5,5,6,5'),
             ('sf', '1,2,3,5,6,7'),
             ('start', '0'),
             ('status', '9'),
             ('uipt', '1,2,3,4,5,6'),
             ('v', '8'),
-            ('zoomLevel', '10'),
         )
 
 
