@@ -23,6 +23,14 @@ class Scrape:
                 "nightly_price",
                 "occupancy_rate",
                 "revenue",
+                "schools",
+                "year_build",
+                "lot_size",
+                "employment_total_covered",
+                "twelve_month_change_pct",
+                "twelve_month_change",
+                "avg_weekly_salary",
+                "avg_weekly_12mo_change_salary",
                 "monthly_profit",
             ])
             # Body
