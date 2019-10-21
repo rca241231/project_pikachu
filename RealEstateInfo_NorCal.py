@@ -129,23 +129,10 @@ class Scraper(Scrape):
             year_build = house['yearBuilt'] if 'yearBuilt' in house.keys() else 'N/A'
             lot_size = house['lotSize'] if 'lotSize' in house.keys() else 'N/A'
 
-            # Get region id from AirDNA
-            if city_link not in self.city_id.keys():
-                params = (
-                    ('access_token', 'ODkwMTc|a2001a6600864e0ca9e6d8da9ea543b3'),
-                    ('country', 'us'),
-                    ('city', city_link),
-                    ('state', 'california'),
-                )
-                city_id = requests.get('https://api.airdna.co/v1/market/area_lookup', headers=self.air_dna_headers, params=params).json()['area_info']['city']['id']
-                self.city_id[city_link] = city_id
-            else:
-                city_id = self.city_id[city_link]
-
             # Get information from AirDNA
             params = (
                 ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
-                ('city_id', city_id),
+                ('city_id', '59193'),
                 ('accommodates', '6'),
                 ('bathrooms', baths if baths != 'N/A' else self.baths),
                 ('bedrooms', beds if beds != 'N/A' else self.beds),
