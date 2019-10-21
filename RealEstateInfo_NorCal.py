@@ -160,7 +160,7 @@ class Scraper(Scrape):
                 revenue = response['property_stats']['revenue']['ltm']
                 monthly_profit = float(revenue)/12 - float(monthly_expense)
             except:
-                print('AirDNA connection failed.')
+                print(f'AirDNA connection failed for {url}')
                 nightly_price = 'N/A'
                 occupancy_rate = 'N/A'
                 revenue = 'N/A'
