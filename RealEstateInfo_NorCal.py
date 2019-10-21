@@ -123,15 +123,21 @@ class Scraper(Scrape):
             listed_price = house['price']['value'] if 'price' in house.keys() and 'value' in house['price'].keys() else 'N/A'
             beds = house['beds'] if 'beds' in house.keys() else 'N/A'
             baths = house['baths'] if 'baths' in house.keys() else 'N/A'
+
+            # Days on Redfin
             days_on_market_info = self.driver.find_elements_by_css_selector('div.more-info > div > span')
             days_on_market = days_on_market_info[-1].find_element_by_css_selector('span.value').get_attribute('textContent').replace('days', '').strip() if len(days_on_market_info) == 0 else 'N/A'
 
+
+            # School info
+            school_data = self.driver.find_elements_by_css_selector('tr.schools-table-row')
+            schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in school_data[1:]]) if len(school_data) > 1 else 'N/A'
+
+            # Monthly expense info
             try:
                 monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
-                schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in self.driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
             except:
                 monthly_expense = 'N/A'
-                schools = 'N/A'
 
             year_build = house['yearBuilt']['value'] if 'yearBuilt' in house.keys() and 'value' in house['yearBuilt'].keys() else 'N/A'
             lot_size = house['lotSize']['value'] if 'lotSize' in house.keys() and 'value' in house['lotSize'].keys() else 'N/A'
