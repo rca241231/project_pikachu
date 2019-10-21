@@ -20,6 +20,7 @@ class Scraper(Scrape):
         self.options.add_argument("--no-sandbox")
         self.options.add_argument("--disable-dev-shm-usage")
         self.driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=self.options)
+        self.city_id = {}
 
         # Specification on the house
         self.beds = '5'
@@ -97,13 +98,6 @@ class Scraper(Scrape):
             ('uipt', '1,2,3,4,5,6'),
             ('v', '8'),
         )
-        self.air_dna_city_info_headers = {
-            'Sec-Fetch-Mode': 'cors',
-            'Referer': 'https://www.airdna.co/vacation-rental-data/app/us/california/san-jose/rentalizer?address=San%20Jose%2C%20CA%2C%20USA&bedrooms=5&bathrooms=3.0&accommodates=6',
-            'Origin': 'https://www.airdna.co',
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
-            'DNT': '1',
-        }
         self.air_dna_headers = {
             'Sec-Fetch-Mode': 'cors',
             'Referer': 'https://www.airdna.co/vacation-rental-data/app/us/california/union-city/rentalizer',
@@ -136,21 +130,25 @@ class Scraper(Scrape):
             lot_size = house['lotSize'] if 'lotSize' in house.keys() else 'N/A'
 
             # Get region id from AirDNA
-            params = (
-                ('access_token', 'ODkwMTc|a2001a6600864e0ca9e6d8da9ea543b3'),
-                ('country', 'us'),
-                ('city', city_link),
-                ('state', 'california'),
-            )
-            city_id = requests.get('https://api.airdna.co/v1/market/area_lookup', headers=self.air_dna_city_info_headers, params=params).json()['area_info']['city']['id']
+            if city_link not in self.city_id.keys():
+                params = (
+                    ('access_token', 'ODkwMTc|a2001a6600864e0ca9e6d8da9ea543b3'),
+                    ('country', 'us'),
+                    ('city', city_link),
+                    ('state', 'california'),
+                )
+                city_id = requests.get('https://api.airdna.co/v1/market/area_lookup', headers=self.air_dna_headers, params=params).json()['area_info']['city']['id']
+                self.city_id[city_link] = city_id
+            else:
+                city_id = self.city_id[city_link]
 
             # Get information from AirDNA
             params = (
                 ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
                 ('city_id', city_id),
                 ('accommodates', '6'),
-                ('bathrooms', '3'),
-                ('bedrooms', '5'),
+                ('bathrooms', self.baths),
+                ('bedrooms', self.beds),
                 ('currency', 'native'),
                 ('address', f"{street_address}, {city}, CA, USA"),
             )
@@ -167,7 +165,6 @@ class Scraper(Scrape):
                 occupancy_rate = 'N/A'
                 revenue = 'N/A'
                 monthly_profit = 'N/A'
-
 
             # Get locality employment information
             county = self.search.by_zipcode(zip_code).county
