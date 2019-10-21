@@ -115,7 +115,7 @@ class Scraper(Scrape):
             print(f"Getting data for {url}")
 
             # Get information from Redfin
-            street_address = ' '.join(house['url'].split('/')[3].split('-')[:-1])
+            street_address = ' '.join(house['url'].split('/')[3].split('-')[:-1]) if 'Undisclosed' not in ' '.join(house['url'].split('/')[3].split('-')[:-1]) else 'N/A'
             city = house['url'].split('/')[2].replace('-', ' ')
             state = house['url'].split('/')[1]
             zip_code = house['url'].split('/')[3].split('-')[-1]
