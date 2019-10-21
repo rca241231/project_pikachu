@@ -123,7 +123,7 @@ class Scraper(Scrape):
             listed_price = house['price']['value'] if 'price' in house.keys() and 'value' in house['price'].keys() else 'N/A'
             beds = house['beds'] if 'beds' in house.keys() else 'N/A'
             baths = house['baths'] if 'baths' in house.keys() else 'N/A'
-            days_on_market = self.driver.find_element_by_css_selector('div.more-info > div > span:nth-of-type(3) > span.value').get_attribute('textContent').replace('days', '').strip()
+            days_on_market = self.driver.find_elements_by_css_selector('div.more-info > div > span')[-1].find_element_by_css_selector('span.value').get_attribute('textContent').replace('days', '').strip()
             try:
                 monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
                 schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in self.driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
