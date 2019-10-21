@@ -112,15 +112,15 @@ class Scraper(Scrape):
 
         for house in houses:
             url = 'https://www.redfin.com' + house['url']
-            city_link = house['url'].split('/')[2].lower()
             self.driver.get(url)
             print(f"Getting data for {url}")
 
             # Get information from Redfin
-            street_address = self.driver.find_element_by_css_selector('span.street-address').get_attribute('textContent')
-            city = self.driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
-            state = self.driver.find_element_by_css_selector('span.citystatezip > span.region').get_attribute('textContent')
-            zip_code = self.driver.find_element_by_css_selector('span.citystatezip > span.postal-code').get_attribute('textContent')
+            street_address = ' '.join(house['url'].split('/')[3].split('-')[:-1])
+            city = house['url'].split('/')[2]
+            state = house['url'].split('/')[1]
+            zip_code = house['url'].split('/')[3].split('-')[-1]
+
             listed_price = house['price'] if 'price' in house.keys() else 'N/A'
             beds = house['beds'] if 'beds' in house.keys() else 'N/A'
             baths = house['baths'] if 'baths' in house.keys() else 'N/A'
@@ -137,7 +137,7 @@ class Scraper(Scrape):
                 ('bathrooms', baths if baths != 'N/A' else self.baths),
                 ('bedrooms', beds if beds != 'N/A' else self.beds),
                 ('currency', 'native'),
-                ('address', f"{street_address}, {city}, CA, USA"),
+                ('address', f'{street_address}, {city}, {state}, USA'),
             )
 
             try:
