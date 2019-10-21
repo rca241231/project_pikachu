@@ -97,6 +97,13 @@ class Scraper(Scrape):
             ('uipt', '1,2,3,4,5,6'),
             ('v', '8'),
         )
+        self.air_dna_city_info_headers = {
+            'Sec-Fetch-Mode': 'cors',
+            'Referer': 'https://www.airdna.co/vacation-rental-data/app/us/california/san-jose/rentalizer?address=San%20Jose%2C%20CA%2C%20USA&bedrooms=5&bathrooms=3.0&accommodates=6',
+            'Origin': 'https://www.airdna.co',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+            'DNT': '1',
+        }
         self.air_dna_headers = {
             'Sec-Fetch-Mode': 'cors',
             'Referer': 'https://www.airdna.co/vacation-rental-data/app/us/california/union-city/rentalizer',
@@ -111,6 +118,7 @@ class Scraper(Scrape):
 
         for house in houses:
             url = 'https://www.redfin.com' + house['url']
+            city_link = house['url'].split('/')[2].lower()
             self.driver.get(url)
             print(f"Getting data for {url}")
 
@@ -127,12 +135,26 @@ class Scraper(Scrape):
             year_build = house['yearBuilt'] if 'yearBuilt' in house.keys() else 'N/A'
             lot_size = house['lotSize'] if 'lotSize' in house.keys() else 'N/A'
 
+            # Get region id from AirDNA
+            params = (
+                ('access_token', 'ODkwMTc|a2001a6600864e0ca9e6d8da9ea543b3'),
+                ('country', 'us'),
+                ('city', city_link),
+                ('state', 'california'),
+            )
+            city_id = requests.get('https://api.airdna.co/v1/market/area_lookup', headers=self.air_dna_city_info_headers, params=params).json()['area_info']['city']['id']
+
             # Get information from AirDNA
             params = (
                 ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
+                ('city_id', city_id),
+                ('accommodates', '6'),
+                ('bathrooms', '3'),
+                ('bedrooms', '5'),
                 ('currency', 'native'),
                 ('address', f"{street_address}, {city}, CA, USA"),
             )
+
             try:
                 response = requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).json()
                 nightly_price = response['property_stats']['adr']['ltm']
@@ -140,6 +162,7 @@ class Scraper(Scrape):
                 revenue = response['property_stats']['revenue']['ltm']
                 monthly_profit = float(revenue)/12 - float(monthly_expense)
             except:
+                print('AirDNA connection failed.')
                 nightly_price = 'N/A'
                 occupancy_rate = 'N/A'
                 revenue = 'N/A'
@@ -148,11 +171,13 @@ class Scraper(Scrape):
 
             # Get locality employment information
             county = self.search.by_zipcode(zip_code).county
-            employment_total_covered = self.county_info[county]['employment_total_covered']
-            twelve_month_change_pct = self.county_info[county]['twelve_month_change_pct']
-            twelve_month_change = self.county_info[county]['twelve_month_change']
-            avg_weekly_salary = self.county_info[county]['avg_weekly_salary']
-            avg_weekly_12mo_change_salary = self.county_info[county]['avg_weekly_12mo_change_salary']
+            employment_total_covered = self.county_info[county]['employment_total_covered']  if county in self.county_info.keys() else 'N/A'
+            twelve_month_change_pct = self.county_info[county]['twelve_month_change_pct'] if county in self.county_info.keys() else 'N/A'
+            twelve_month_change = self.county_info[county]['twelve_month_change'] if county in self.county_info.keys() else 'N/A'
+            avg_weekly_salary = self.county_info[county]['avg_weekly_salary'] if county in self.county_info.keys() else 'N/A'
+            avg_weekly_12mo_change_salary = self.county_info[county]['avg_weekly_12mo_change_salary'] if county in self.county_info.keys() else 'N/A'
+
+            print('\n ---------------------- \n')
 
             self.data.append(
                 [
