@@ -177,8 +177,6 @@ class Scraper(Scrape):
             avg_weekly_salary = self.county_info[county]['avg_weekly_salary'] if county in self.county_info.keys() else 'N/A'
             avg_weekly_12mo_change_salary = self.county_info[county]['avg_weekly_12mo_change_salary'] if county in self.county_info.keys() else 'N/A'
 
-            print('\n ---------------------- \n')
-
             self.data.append(
                 [
                     url,
