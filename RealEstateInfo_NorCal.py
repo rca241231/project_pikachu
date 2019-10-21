@@ -120,9 +120,10 @@ class Scraper(Scrape):
             state = house['url'].split('/')[1]
             zip_code = house['url'].split('/')[3].split('-')[-1]
 
-            listed_price = house['price']['value'] if 'price' in house.keys() else 'N/A'
+            listed_price = house['price']['value'] if 'price' in house.keys() and 'value' in house['price'].keys() else 'N/A'
             beds = house['beds'] if 'beds' in house.keys() else 'N/A'
             baths = house['baths'] if 'baths' in house.keys() else 'N/A'
+            days_on_market = self.driver.find_element_by_css_selector('div.more-info > div > span:nth-of-type(3) > span.value').get_attribute('textContent').replace('days', '').strip()
             try:
                 monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
                 schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in self.driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
@@ -130,8 +131,8 @@ class Scraper(Scrape):
                 monthly_expense = 'N/A'
                 schools = 'N/A'
 
-            year_build = house['yearBuilt'] if 'yearBuilt' in house.keys() else 'N/A'
-            lot_size = house['lotSize'] if 'lotSize' in house.keys() else 'N/A'
+            year_build = house['yearBuilt']['value'] if 'yearBuilt' in house.keys() and 'value' in house['yearBuilt'].keys() else 'N/A'
+            lot_size = house['lotSize']['value'] if 'lotSize' in house.keys() and 'value' in house['lotSize'].keys() else 'N/A'
 
             # Get information from AirDNA
             full_address = f'{street_address}, {city}, {state}, USA'
@@ -170,6 +171,7 @@ class Scraper(Scrape):
                 [
                     url,
                     street_address,
+                    days_on_market,
                     city,
                     state,
                     zip_code,

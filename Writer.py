@@ -13,6 +13,7 @@ class Scrape:
             writer.writerow([
                 "url",
                 "street_address",
+                "days_on_market",
                 "city",
                 "state",
                 "zip_code",
