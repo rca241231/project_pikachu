@@ -116,11 +116,11 @@ class Scraper(Scrape):
 
             # Get information from Redfin
             street_address = ' '.join(house['url'].split('/')[3].split('-')[:-1])
-            city = house['url'].split('/')[2]
+            city = house['url'].split('/')[2].replace('-', ' ')
             state = house['url'].split('/')[1]
             zip_code = house['url'].split('/')[3].split('-')[-1]
 
-            listed_price = house['price'] if 'price' in house.keys() else 'N/A'
+            listed_price = house['price']['value'] if 'price' in house.keys() else 'N/A'
             beds = house['beds'] if 'beds' in house.keys() else 'N/A'
             baths = house['baths'] if 'baths' in house.keys() else 'N/A'
             try:
