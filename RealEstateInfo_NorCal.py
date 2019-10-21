@@ -115,7 +115,7 @@ class Scraper(Scrape):
             print(f"Getting data for {url}")
 
             # Get information from Redfin
-            street_address = house['streetLine']['value'] if 'streetLine' in house.keys() else 'N/A'
+            street_address = house['streetLine']['value'] if 'streetLine' in house.keys() and 'Undisclosed' not in url else 'N/A'
             city = self.driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
             state = self.driver.find_element_by_css_selector('span.citystatezip > span.region').get_attribute('textContent')
             zip_code = self.driver.find_element_by_css_selector('span.citystatezip > span.postal-code').get_attribute('textContent')
