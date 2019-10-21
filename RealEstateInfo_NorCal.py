@@ -130,7 +130,6 @@ class Scraper(Scrape):
             # Get information from AirDNA
             params = (
                 ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
-                ('city_id', '59193'),
                 ('currency', 'native'),
                 ('address', f"{street_address}, {city}, CA, USA"),
             )
