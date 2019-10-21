@@ -20,7 +20,6 @@ class Scraper(Scrape):
         self.options.add_argument("--no-sandbox")
         self.options.add_argument("--disable-dev-shm-usage")
         self.driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=self.options)
-        self.city_id = {}
 
         # Specification on the house
         self.beds = '5'
@@ -124,12 +123,18 @@ class Scraper(Scrape):
             listed_price = house['price'] if 'price' in house.keys() else 'N/A'
             beds = house['beds'] if 'beds' in house.keys() else 'N/A'
             baths = house['baths'] if 'baths' in house.keys() else 'N/A'
-            monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
-            schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in self.driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
+            try:
+                monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
+                schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in self.driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
+            except:
+                monthly_expense = 'N/A'
+                schools = 'N/A'
+
             year_build = house['yearBuilt'] if 'yearBuilt' in house.keys() else 'N/A'
             lot_size = house['lotSize'] if 'lotSize' in house.keys() else 'N/A'
 
             # Get information from AirDNA
+            full_address = f'{street_address}, {city}, {state}, USA'
             params = (
                 ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
                 ('city_id', '59193'),
@@ -137,7 +142,7 @@ class Scraper(Scrape):
                 ('bathrooms', baths if baths != 'N/A' else self.baths),
                 ('bedrooms', beds if beds != 'N/A' else self.beds),
                 ('currency', 'native'),
-                ('address', f'{street_address}, {city}, {state}, USA'),
+                ('address', full_address),
             )
 
             try:
@@ -147,7 +152,7 @@ class Scraper(Scrape):
                 revenue = response['property_stats']['revenue']['ltm']
                 monthly_profit = float(revenue)/12 - float(monthly_expense)
             except:
-                print(f'AirDNA connection failed for {url}')
+                print(f'AirDNA connection failed for: {full_address}')
                 nightly_price = 'N/A'
                 occupancy_rate = 'N/A'
                 revenue = 'N/A'
