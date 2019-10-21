@@ -134,18 +134,18 @@ class Scraper(Scrape):
                 ('currency', 'native'),
                 ('address', f"{street_address}, {city}, CA, USA"),
             )
-            response = requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).json()
-
-            if 'property_details' not in response.keys():
-                nightly_price = 'N/A'
-                occupancy_rate = 'N/A'
-                revenue = 'N/A'
-                monthly_profit = 'N/A'
-            else:
+            try:
+                response = requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).json()
                 nightly_price = response['property_stats']['adr']['ltm']
                 occupancy_rate = response['property_stats']['occupancy']['ltm']
                 revenue = response['property_stats']['revenue']['ltm']
                 monthly_profit = float(revenue)/12 - float(monthly_expense)
+            except:
+                nightly_price = 'N/A'
+                occupancy_rate = 'N/A'
+                revenue = 'N/A'
+                monthly_profit = 'N/A'
+
 
             # Get locality employment information
             county = self.search.by_zipcode(zip_code).county
