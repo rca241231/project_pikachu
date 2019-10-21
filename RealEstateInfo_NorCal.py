@@ -117,7 +117,7 @@ class Scraper(Scrape):
             print(f"Getting data for {url}")
 
             # Get information from Redfin
-            street_address = house['streetLine'] if 'streetLine' in house.keys() else 'N/A'
+            street_address = self.driver.find_element_by_css_selector('span.street-address').get_attribute('textContent')
             city = self.driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
             state = self.driver.find_element_by_css_selector('span.citystatezip > span.region').get_attribute('textContent')
             zip_code = self.driver.find_element_by_css_selector('span.citystatezip > span.postal-code').get_attribute('textContent')
@@ -147,8 +147,8 @@ class Scraper(Scrape):
                 ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
                 ('city_id', city_id),
                 ('accommodates', '6'),
-                ('bathrooms', self.baths),
-                ('bedrooms', self.beds),
+                ('bathrooms', baths if baths != 'N/A' else self.baths),
+                ('bedrooms', beds if beds != 'N/A' else self.beds),
                 ('currency', 'native'),
                 ('address', f"{street_address}, {city}, CA, USA"),
             )
