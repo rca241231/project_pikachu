@@ -115,17 +115,17 @@ class Scraper(Scrape):
             print(f"Getting data for {url}")
 
             # Get information from Redfin
-            street_address = house['streetLine']['value'] if 'streetLine' in house.keys() and 'Undisclosed' not in url else 'N/A'
+            street_address = house['streetLine'] if 'streetLine' in house.keys() else 'N/A'
             city = self.driver.find_element_by_css_selector('span.citystatezip > span.locality').get_attribute('textContent')
             state = self.driver.find_element_by_css_selector('span.citystatezip > span.region').get_attribute('textContent')
             zip_code = self.driver.find_element_by_css_selector('span.citystatezip > span.postal-code').get_attribute('textContent')
-            listed_price = house['price']['value'] if 'price' in house.keys() else 'N/A'
+            listed_price = house['price'] if 'price' in house.keys() else 'N/A'
             beds = house['beds'] if 'beds' in house.keys() else 'N/A'
             baths = house['baths'] if 'baths' in house.keys() else 'N/A'
             monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
             schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in self.driver.find_elements_by_css_selector('tr.schools-table-row')[1:]])
-            year_build = house['yearBuilt']['value'] if 'yearBuilt' in house.keys() else 'N/A'
-            lot_size = house['lotSize']['value'] if 'lotSize' in house.keys() else 'N/A'
+            year_build = house['yearBuilt'] if 'yearBuilt' in house.keys() else 'N/A'
+            lot_size = house['lotSize'] if 'lotSize' in house.keys() else 'N/A'
 
             # Get information from AirDNA
             params = (
