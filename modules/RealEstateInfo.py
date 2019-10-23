@@ -1,6 +1,7 @@
 import requests
 import json
 import re
+import multiprocessing
 
 from modules.Writer import Scrape
 from uszipcode import SearchEngine
@@ -156,5 +157,7 @@ class Scraper(Scrape):
     def fetch_data(self):
         houses = self.get_all_redfin_listings()
         for house in houses:
-            self.combine_data(house)
+            proc = multiprocessing.Process(target=self.combine_data, args=(house,))
+            proc.start()
+            proc.join()
         self.driver.quit()
