@@ -1,14 +1,16 @@
 import csv
+import os
 from collections import defaultdict
 
 class Scrape:
     def __init__(self):
         self.CHROME_DRIVER_PATH = './chromedriver'
 
-    def write_output(self, data):
-        with open('data.csv', mode='w') as output_file:
+    def write_output(self):
+        with open('data.csv', mode='a') as output_file:
             writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
 
+        if 'data.csv' not in os.listdir('.'):
             # Header
             writer.writerow([
                 "url",
@@ -34,9 +36,9 @@ class Scrape:
                 "avg_weekly_12mo_change_salary",
                 "monthly_profit",
             ])
-            # Body
-            for row in data:
-                writer.writerow(row)
+        # Body
+        for row in self.data:
+            writer.writerow(row)
 
     def etree_to_dict(self, t):
         d = {t.tag: {} if t.attrib else None}
@@ -66,4 +68,4 @@ class Scrape:
 
     def scrape(self):
         self.fetch_data()
-        self.write_output(self.data)
+        self.write_output()

@@ -1,19 +1,25 @@
 import requests
 import json
 import re
-import asyncio
 
-from Writer import Scrape
+from modules.Writer import Scrape
 from uszipcode import SearchEngine
-from concurrent.futures.thread import ThreadPoolExecutor
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from markets.NorCal import *
 
 
 class Scraper(Scrape):
-    def __init__(self):
+    def __init__(self,
+                 county_info,
+                 redfin_cookies,
+                 redfin_headers,
+                 redfin_params):
         Scrape.__init__(self)
+        self.county_info = county_info
+        self.redfin_headers = redfin_headers
+        self.redfin_params = redfin_params
+        self.redfin_cookies = redfin_cookies
         self.data = []
         self.search = SearchEngine(simple_zipcode=True)
         self.options = Options()
@@ -21,7 +27,6 @@ class Scraper(Scrape):
         self.options.add_argument("--no-sandbox")
         self.options.add_argument("--disable-dev-shm-usage")
         self.driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=self.options)
-        self.executor = ThreadPoolExecutor(5000)
 
         # TODO: If new location, change the following
         self.air_dna_headers = {
@@ -33,7 +38,7 @@ class Scraper(Scrape):
         }
 
     def get_all_redfin_listings(self):
-        response = json.loads(requests.get('https://www.redfin.com/stingray/api/gis', headers=redfin_headers, params=redfin_params, cookies=redfin_cookies).text.replace('{}&&', ''))
+        response = json.loads(requests.get('https://www.redfin.com/stingray/api/gis', headers=self.redfin_headers, params=self.redfin_params, cookies=self.redfin_cookies).text.replace('{}&&', ''))
         houses = response['payload']['homes']
         return houses
 
@@ -100,11 +105,11 @@ class Scraper(Scrape):
 
     def get_local_data(self, zip_code):
         county = self.search.by_zipcode(zip_code).county
-        employment_total_covered = county_info[county]['employment_total_covered']  if county in county_info.keys() else 'N/A'
-        twelve_month_change_pct = county_info[county]['twelve_month_change_pct'] if county in county_info.keys() else 'N/A'
-        twelve_month_change = county_info[county]['twelve_month_change'] if county in county_info.keys() else 'N/A'
-        avg_weekly_salary = county_info[county]['avg_weekly_salary'] if county in county_info.keys() else 'N/A'
-        avg_weekly_12mo_change_salary = county_info[county]['avg_weekly_12mo_change_salary'] if county in county_info.keys() else 'N/A'
+        employment_total_covered = self.county_info[county]['employment_total_covered']  if county in self.county_info.keys() else 'N/A'
+        twelve_month_change_pct = self.county_info[county]['twelve_month_change_pct'] if county in self.county_info.keys() else 'N/A'
+        twelve_month_change = self.county_info[county]['twelve_month_change'] if county in self.county_info.keys() else 'N/A'
+        avg_weekly_salary = self.county_info[county]['avg_weekly_salary'] if county in self.county_info.keys() else 'N/A'
+        avg_weekly_12mo_change_salary = self.county_info[county]['avg_weekly_12mo_change_salary'] if county in self.county_info.keys() else 'N/A'
 
         return employment_total_covered, twelve_month_change_pct, twelve_month_change, avg_weekly_salary, avg_weekly_12mo_change_salary
 
@@ -150,18 +155,6 @@ class Scraper(Scrape):
 
     def fetch_data(self):
         houses = self.get_all_redfin_listings()
-        # loop = asyncio.get_event_loop()
-        counter = 5
-        i = 0
         for house in houses:
-            if i == 5:
-                break
             self.combine_data(house)
-            i += 1
-            # loop.run_in_executor(self.executor, self.combine_data, house)
-        # loop.run_until_complete(asyncio.gather(*asyncio.all_tasks(loop)))
         self.driver.quit()
-
-
-scrape = Scraper()
-scrape.scrape()

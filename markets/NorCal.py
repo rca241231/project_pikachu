@@ -1,4 +1,4 @@
-from CountyEmployment import CountyInfo
+from modules.CountyEmployment import CountyInfo
 
 max_price = '1250000'
 beds = '5'
