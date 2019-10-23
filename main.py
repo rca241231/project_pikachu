@@ -1,6 +1,6 @@
 import markets
 import os
-import threading
+import multiprocessing
 from modules.RealEstateInfo import Scraper
 
 if __name__ == "__main__":
@@ -8,6 +8,8 @@ if __name__ == "__main__":
         os.remove('/modules/data.csv')
     except:
         print('data.csv does not exist.')
+
+    print("Number of cpu: ", multiprocessing.cpu_count())
 
     for key, obj in markets.__dict__.items():
         if key[:2] != "__":
@@ -17,6 +19,8 @@ if __name__ == "__main__":
             redfin_headers = eval(f"markets.{key}.redfin_headers")
             redfin_params = eval(f"markets.{key}.redfin_params")
             scrape = Scraper(county_info, redfin_cookies, redfin_headers, redfin_params)
-            task = threading.Thread(target=scrape.scrape, args=())
-            task.start()
-            task.join()
+            proc = multiprocessing.Process(target=scrape.scrape, args=())
+            proc.start()
+            proc.join()
+
+
