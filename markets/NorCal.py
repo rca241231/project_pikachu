@@ -63,7 +63,7 @@ redfin_params = (
     ('min_stories', '1'),
     ('num_beds', beds),
     ('num_baths', baths),
-    ('num_homes', '10000'),
+    ('num_homes', '1000'),
     ('ord', 'redfin-recommended-asc'),
     ('page_number', '1'),
     ('region_id', '345,343,17151,303'),

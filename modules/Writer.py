@@ -7,10 +7,9 @@ class Scrape:
         self.CHROME_DRIVER_PATH = './chromedriver'
 
     def write_output(self):
-        with open('data.csv', mode='a') as output_file:
+        with open('./data.csv', mode='a') as output_file:
             writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
 
-        if 'data.csv' not in os.listdir('.'):
             # Header
             writer.writerow([
                 "url",
@@ -36,9 +35,10 @@ class Scrape:
                 "avg_weekly_12mo_change_salary",
                 "monthly_profit",
             ])
-        # Body
-        for row in self.data:
-            writer.writerow(row)
+
+            # Body
+            for row in self.data:
+                writer.writerow(row)
 
     def etree_to_dict(self, t):
         d = {t.tag: {} if t.attrib else None}

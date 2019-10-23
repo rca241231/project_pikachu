@@ -5,7 +5,7 @@ from modules.RealEstateInfo import Scraper
 
 if __name__ == "__main__":
     try:
-        os.remove('/modules/data.csv')
+        os.remove('data.csv')
     except:
         print('data.csv does not exist.')
 
@@ -19,8 +19,6 @@ if __name__ == "__main__":
             redfin_headers = eval(f"markets.{key}.redfin_headers")
             redfin_params = eval(f"markets.{key}.redfin_params")
             scrape = Scraper(county_info, redfin_cookies, redfin_headers, redfin_params)
-            proc = multiprocessing.Process(target=scrape.scrape, args=())
-            proc.start()
-            proc.join()
+            scrape.scrape()
 
 
