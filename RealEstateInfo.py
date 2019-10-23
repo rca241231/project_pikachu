@@ -148,29 +148,6 @@ class Scraper(Scrape):
             ]
         )
 
-        print(url,
-              street_address,
-              days_on_market,
-              city,
-              state,
-              zip_code,
-              listed_price,
-              beds,
-              baths,
-              monthly_expense,
-              nightly_price,
-              occupancy_rate,
-              revenue,
-              schools,
-              year_build,
-              lot_size,
-              employment_total_covered,
-              twelve_month_change_pct,
-              twelve_month_change,
-              avg_weekly_salary,
-              avg_weekly_12mo_change_salary,
-              monthly_profit)
-
     def fetch_data(self):
         houses = self.get_all_redfin_listings()
         # loop = asyncio.get_event_loop()
