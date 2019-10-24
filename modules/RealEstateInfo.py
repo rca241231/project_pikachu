@@ -59,7 +59,7 @@ class Scraper(Scrape):
 
         # Days on Redfin
         days_on_market_info = self.driver.find_elements_by_css_selector('div.more-info > div > span')
-        days_on_market = days_on_market_info[-1].find_element_by_css_selector('span.value').get_attribute('textContent').replace('days', '').strip() if len(days_on_market_info) == 0 else 'N/A'
+        days_on_market = days_on_market_info[-1].find_element_by_css_selector('span.value').get_attribute('textContent').replace('days', '').strip() if len(days_on_market_info) != 0 else 'N/A'
 
 
         # School info
@@ -156,6 +156,13 @@ class Scraper(Scrape):
 
     def fetch_data(self):
         houses = self.get_all_redfin_listings()
+        process = []
         for house in houses:
-            self.combine_data(house)
+            proc = multiprocessing.Process(target=self.combine_data, args=(house,))
+            process.append(proc)
+            proc.start()
+
+        for proc in process:
+            proc.join()
+
         self.driver.quit()
