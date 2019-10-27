@@ -28,8 +28,6 @@ class Scraper(Scrape):
         self.options.add_argument("--no-sandbox")
         self.options.add_argument("--disable-dev-shm-usage")
         self.driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=self.options)
-
-        # TODO: If new location, change the following
         self.air_dna_headers = {
             'Sec-Fetch-Mode': 'cors',
             'Referer': 'https://www.airdna.co/vacation-rental-data/app/us/california/union-city/rentalizer',
