@@ -156,13 +156,7 @@ class Scraper(Scrape):
 
     def fetch_data(self):
         houses = self.get_all_redfin_listings()
-        process = []
         for house in houses:
-            proc = multiprocessing.Process(target=self.combine_data, args=(house,))
-            process.append(proc)
-            proc.start()
-
-        for proc in process:
-            proc.join()
+            self.combine_data(house)
 
         self.driver.quit()

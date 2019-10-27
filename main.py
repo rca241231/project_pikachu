@@ -6,7 +6,7 @@ from markets import markets
 
 def print_markets(markets):
     for market in markets.redfin_params_markets.keys():
-        print(f"Getting information for {markets}, {markets.redfin_params_markets[market]}")
+        print(f"Getting information for {market}, {markets.redfin_params_markets[market]['state']}")
 
 
 def connstruct_market_procs(markets):
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         os.remove('data.csv')
     except:
         print('data.csv does not exist.')
-    print("Number of cpu: ", multiprocessing.cpu_count())
+    print("Number of CPUs: ", multiprocessing.cpu_count())
 
     # Load markets
     markets = markets.Markets()
