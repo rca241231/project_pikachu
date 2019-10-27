@@ -1,13 +1,11 @@
 import requests
 import json
 import re
-import multiprocessing
 
 from modules.Writer import Scrape
 from uszipcode import SearchEngine
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from markets.NorCal import *
 
 
 class Scraper(Scrape):
