@@ -6,42 +6,6 @@ class Scrape:
     def __init__(self):
         self.CHROME_DRIVER_PATH = './chromedriver'
 
-    def write_output(self):
-        writerrow_top = False if 'data.csv' in os.listdir('./') else True
-        with open('./data.csv', mode='a') as output_file:
-            writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-
-            if writerrow_top:
-                # Header
-                writer.writerow([
-                    "url",
-                    "street_address",
-                    "days_on_market",
-                    "city",
-                    "state",
-                    "zip_code",
-                    "listed_price",
-                    "beds",
-                    "baths",
-                    "monthly_expense",
-                    "nightly_price",
-                    "occupancy_rate",
-                    "revenue",
-                    "schools",
-                    "year_build",
-                    "lot_size",
-                    "employment_total_covered",
-                    "twelve_month_change_pct",
-                    "twelve_month_change",
-                    "avg_weekly_salary",
-                    "avg_weekly_12mo_change_salary",
-                    "monthly_profit",
-                ])
-
-            # Body
-            for row in self.data:
-                writer.writerow(row)
-
     def etree_to_dict(self, t):
         d = {t.tag: {} if t.attrib else None}
         children = list(t)
@@ -70,4 +34,3 @@ class Scrape:
 
     def scrape(self):
         self.fetch_data()
-        self.write_output()

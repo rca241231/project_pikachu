@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # Start process
     process = []
     for market_scraper_proc in market_scraper_procs:
-        proc = multiprocessing.Process(target=market_scraper_proc.scrape(), args=())
+        proc = multiprocessing.Process(target=market_scraper_proc.scrape, args=())
         process.append(proc)
         proc.start()
 

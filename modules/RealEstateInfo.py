@@ -1,6 +1,9 @@
 import requests
 import json
 import re
+import os
+import csv
+import multiprocessing
 
 from modules.Writer import Scrape
 from uszipcode import SearchEngine
@@ -19,6 +22,7 @@ class Scraper(Scrape):
         self.redfin_headers = redfin_headers
         self.redfin_params = redfin_params
         self.redfin_cookies = redfin_cookies
+        self.housing_data = {}
         self.data = []
         self.search = SearchEngine(simple_zipcode=True)
         self.options = Options()
@@ -39,24 +43,22 @@ class Scraper(Scrape):
         houses = response['payload']['homes']
         return houses
 
-    def get_redfin_data(self, url, house):
+    def get_redfin_data(self, url, mls, house):
         self.driver.get(url)
         print(f"Getting data for {url}")
 
         # Get information from Redfin
-        street_address = ' '.join(house['url'].split('/')[3].split('-')[:-1]) if 'Undisclosed' not in ' '.join(house['url'].split('/')[3].split('-')[:-1]) else 'N/A'
-        city = house['url'].split('/')[2].replace('-', ' ')
-        state = house['url'].split('/')[1]
-        zip_code = house['url'].split('/')[3].split('-')[-1]
+        street_address = house['streetLine']['value']
+        city = house['city']
+        state = house['state']
+        zip_code = house['zip']
 
         listed_price = house['price']['value'] if 'price' in house.keys() and 'value' in house['price'].keys() else 'N/A'
         beds = house['beds'] if 'beds' in house.keys() else 'N/A'
         baths = house['baths'] if 'baths' in house.keys() else 'N/A'
 
         # Days on Redfin
-        days_on_market_info = self.driver.find_elements_by_css_selector('div.more-info > div > span')
-        days_on_market = days_on_market_info[-1].find_element_by_css_selector('span.value').get_attribute('textContent').replace('days', '').strip() if len(days_on_market_info) != 0 else 'N/A'
-
+        days_on_market = house['timeOnRedfin']['value'] / (1000 * 60 * 60 * 24) if 'value' in house['timeOnRedfin'].keys() else 'N/A'
 
         # School info
         school_data = self.driver.find_elements_by_css_selector('tr.schools-table-row')
@@ -70,11 +72,34 @@ class Scraper(Scrape):
 
         year_build = house['yearBuilt']['value'] if 'yearBuilt' in house.keys() and 'value' in house['yearBuilt'].keys() else 'N/A'
         lot_size = house['lotSize']['value'] if 'lotSize' in house.keys() and 'value' in house['lotSize'].keys() else 'N/A'
+        hoa = house['hoa']['value'] if 'value' in house['hoa'].keys() else 0
+        sqft = house['sqFt']['value']
+        self.housing_data[mls] = {
+            "url": url,
+            "street_address": street_address,
+            "city": city,
+            "state": state,
+            "zip_code": zip_code,
+            "listed_price": listed_price,
+            "beds": beds,
+            "baths": baths,
+            "days_on_market": days_on_market,
+            "schools": schools,
+            "monthly_expense": monthly_expense,
+            "year_build": year_build,
+            "lot_size": lot_size,
+            "hoa": hoa,
+            "sqft": sqft,
+        }
 
-        return street_address, city, state, zip_code, listed_price, beds, baths, days_on_market, schools, monthly_expense, year_build, lot_size
-
-    def get_airdna_data(self, street_address, city, state, monthly_expense, beds, baths):
+    def get_airdna_data(self, mls, house):
         # Get information from AirDNA
+        street_address = self.housing_data[mls]['street_address']
+        city = self.housing_data[mls]['city']
+        state = self.housing_data[mls]['state']
+        baths = self.housing_data[mls]['baths']
+        beds = self.housing_data[mls]['beds']
+        monthly_expense = self.housing_data[mls]['monthly_expense']
         full_address = f'{street_address}, {city}, {state}, USA'
         params = (
             ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
@@ -98,9 +123,15 @@ class Scraper(Scrape):
             occupancy_rate = 'N/A'
             revenue = 'N/A'
             monthly_profit = 'N/A'
-        return nightly_price, occupancy_rate, revenue, monthly_profit
 
-    def get_local_data(self, zip_code):
+        self.housing_data[mls]['nightly_price'] = nightly_price
+        self.housing_data[mls]['occupancy_rate'] = occupancy_rate
+        self.housing_data[mls]['revenue'] = revenue
+        self.housing_data[mls]['monthly_profit'] = monthly_profit
+
+
+    def get_local_data(self, mls):
+        zip_code = self.housing_data[mls]['zip_code']
         county = self.search.by_zipcode(zip_code).county
         employment_total_covered = self.county_info[county]['employment_total_covered']  if county in self.county_info.keys() else 'N/A'
         twelve_month_change_pct = self.county_info[county]['twelve_month_change_pct'] if county in self.county_info.keys() else 'N/A'
@@ -108,51 +139,104 @@ class Scraper(Scrape):
         avg_weekly_salary = self.county_info[county]['avg_weekly_salary'] if county in self.county_info.keys() else 'N/A'
         avg_weekly_12mo_change_salary = self.county_info[county]['avg_weekly_12mo_change_salary'] if county in self.county_info.keys() else 'N/A'
 
-        return employment_total_covered, twelve_month_change_pct, twelve_month_change, avg_weekly_salary, avg_weekly_12mo_change_salary
+        self.housing_data[mls]['employment_total_covered'] = employment_total_covered
+        self.housing_data[mls]['twelve_month_change_pct'] = twelve_month_change_pct
+        self.housing_data[mls]['twelve_month_change'] = twelve_month_change
+        self.housing_data[mls]['avg_weekly_salary'] = avg_weekly_salary
+        self.housing_data[mls]['avg_weekly_12mo_change_salary'] = avg_weekly_12mo_change_salary
+
+
+
+    def write_output(self, mls):
+        writerrow_top = False if 'data.csv' in os.listdir('./') else True
+        with open('./data.csv', mode='a') as output_file:
+            writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+
+            if writerrow_top:
+                # Header
+                writer.writerow([
+                    "url",
+                    "street_address",
+                    "days_on_market",
+                    "city",
+                    "state",
+                    "zip_code",
+                    "hoa",
+                    "sqft",
+                    "lot_size",
+                    "year_build",
+                    "listed_price",
+                    "beds",
+                    "baths",
+                    "monthly_expense",
+                    "nightly_price",
+                    "occupancy_rate",
+                    "revenue",
+                    "schools",
+                    "employment_total_covered",
+                    "twelve_month_change_pct",
+                    "twelve_month_change",
+                    "avg_weekly_salary",
+                    "avg_weekly_12mo_change_salary",
+                    "monthly_profit",
+                ])
+
+            writer.writerow([
+                self.housing_data[mls]['url'],
+                self.housing_data[mls]['street_address'],
+                self.housing_data[mls]['days_on_market'],
+                self.housing_data[mls]['city'],
+                self.housing_data[mls]['state'],
+                self.housing_data[mls]['zip_code'],
+                self.housing_data[mls]['hoa'],
+                self.housing_data[mls]['sqft'],
+                self.housing_data[mls]['lot_size'],
+                self.housing_data[mls]['year_build'],
+                self.housing_data[mls]['listed_price'],
+                self.housing_data[mls]['beds'],
+                self.housing_data[mls]['baths'],
+                self.housing_data[mls]['monthly_expense'],
+                self.housing_data[mls]['nightly_price'],
+                self.housing_data[mls]['occupancy_rate'],
+                self.housing_data[mls]['revenue'],
+                self.housing_data[mls]['schools'],
+                self.housing_data[mls]['employment_total_covered'],
+                self.housing_data[mls]['twelve_month_change_pct'],
+                self.housing_data[mls]['twelve_month_change'],
+                self.housing_data[mls]['avg_weekly_salary'],
+                self.housing_data[mls]['avg_weekly_12mo_change_salary'],
+                self.housing_data[mls]['monthly_profit'],
+            ])
+
 
     def combine_data(self, house):
+        mls = house['mlsId']['value']
         url = 'https://www.redfin.com' + house['url']
 
         # Get Redfin data
-        street_address, city, state, zip_code, listed_price, beds, baths, days_on_market, schools, monthly_expense, year_build, lot_size = self.get_redfin_data(url, house)
+        self.get_redfin_data(url, mls, house)
 
         # Get AirDNA Data
-        nightly_price, occupancy_rate, revenue, monthly_profit = self.get_airdna_data(street_address, city, state, monthly_expense, beds, baths)
+        self.get_airdna_data(mls, house)
 
         # Get locality employment information
-        employment_total_covered, twelve_month_change_pct, twelve_month_change, avg_weekly_salary, avg_weekly_12mo_change_salary = self.get_local_data(zip_code)
+        self.get_local_data(mls)
 
-        # Append complete data
-        self.data.append(
-            [
-                url,
-                street_address,
-                days_on_market,
-                city,
-                state,
-                zip_code,
-                listed_price,
-                beds,
-                baths,
-                monthly_expense,
-                nightly_price,
-                occupancy_rate,
-                revenue,
-                schools,
-                year_build,
-                lot_size,
-                employment_total_covered,
-                twelve_month_change_pct,
-                twelve_month_change,
-                avg_weekly_salary,
-                avg_weekly_12mo_change_salary,
-                monthly_profit,
-            ]
-        )
+        # Write output
+        self.write_output(mls)
+
 
     def fetch_data(self):
         houses = self.get_all_redfin_listings()
+
+        # Create separate processes by houses
+        process = []
         for house in houses:
-            self.combine_data(house)
+            proc = multiprocessing.Process(target=self.combine_data, args=(house,))
+            process.append(proc)
+            proc.start()
+
+        for proc in process:
+            proc.join()
 
         self.driver.quit()
