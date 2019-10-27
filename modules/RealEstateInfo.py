@@ -73,15 +73,15 @@ class Scraper(Scrape):
 
         return street_address, city, state, zip_code, listed_price, beds, baths, days_on_market, schools, monthly_expense, year_build, lot_size
 
-    def get_airdna_data(self, street_address, city, state, monthly_expense):
+    def get_airdna_data(self, street_address, city, state, monthly_expense, beds, baths):
         # Get information from AirDNA
         full_address = f'{street_address}, {city}, {state}, USA'
         params = (
             ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
             ('city_id', '59193'),
             ('accommodates', '6'),
-            ('bathrooms', baths if baths != 'N/A' else baths),
-            ('bedrooms', beds if beds != 'N/A' else beds),
+            ('bathrooms', str(baths)[0] if baths != 'N/A' else baths),
+            ('bedrooms', str(beds) if beds != 'N/A' else beds),
             ('currency', 'native'),
             ('address', full_address),
         )
@@ -117,7 +117,7 @@ class Scraper(Scrape):
         street_address, city, state, zip_code, listed_price, beds, baths, days_on_market, schools, monthly_expense, year_build, lot_size = self.get_redfin_data(url, house)
 
         # Get AirDNA Data
-        nightly_price, occupancy_rate, revenue, monthly_profit = self.get_airdna_data(street_address, city, state, monthly_expense)
+        nightly_price, occupancy_rate, revenue, monthly_profit = self.get_airdna_data(street_address, city, state, monthly_expense, beds, baths)
 
         # Get locality employment information
         employment_total_covered, twelve_month_change_pct, twelve_month_change, avg_weekly_salary, avg_weekly_12mo_change_salary = self.get_local_data(zip_code)
