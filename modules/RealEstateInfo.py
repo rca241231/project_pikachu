@@ -9,6 +9,9 @@ from modules.Writer import Scrape
 from uszipcode import SearchEngine
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class Scraper(Scrape):
@@ -75,6 +78,7 @@ class Scraper(Scrape):
 
         # School info
         try:
+            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "schools-table-row")))
             school_data = self.driver.find_elements_by_css_selector('tr.schools-table-row')
             schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in school_data[1:]]) if len(school_data) > 1 else 'N/A'
         except:
@@ -129,7 +133,7 @@ class Scraper(Scrape):
             nightly_price = response['property_stats']['adr']['ltm']
             occupancy_rate = response['property_stats']['occupancy']['ltm']
             revenue = response['property_stats']['revenue']['ltm']
-            monthly_profit = round(float(revenue)/12 - float(monthly_expense), 2) if monthly_expense != 'N/A' else 'N/A'
+            monthly_profit = round(float(revenue)/12 - float(monthly_expense), 2)
         else:
             print(f'No AirDNA result for: {street_address}')
             nightly_price = 'N/A'
