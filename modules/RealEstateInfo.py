@@ -16,12 +16,21 @@ class Scraper(Scrape):
                  county_info,
                  redfin_cookies,
                  redfin_headers,
-                 redfin_params):
+                 redfin_params,
+                 interest_rate,
+                 borrowing_pct,
+                 mortgage_term_years,
+                 insurance_cost
+                 ):
         Scrape.__init__(self)
+        self.insurance_cost = insurance_cost
         self.county_info = county_info
+        self.interest_rate = interest_rate
+        self.borrowing_pct = borrowing_pct
         self.redfin_headers = redfin_headers
         self.redfin_params = redfin_params
         self.redfin_cookies = redfin_cookies
+        self.mortgage_term_years = mortgage_term_years
         self.housing_data = {}
         self.data = []
         self.search = SearchEngine(simple_zipcode=True)
@@ -48,7 +57,7 @@ class Scraper(Scrape):
         print(f"Getting data for {url}")
 
         # Get information from Redfin
-        street_address = house['streetLine']['value']
+        street_address = house['streetLine']['value'] if 'value' in house['streetLine'].keys() else 'N/A'
         city = house['city']
         state = house['state']
         zip_code = house['zip']
@@ -59,21 +68,24 @@ class Scraper(Scrape):
 
         # Days on Redfin
         days_on_market = house['timeOnRedfin']['value'] / (1000 * 60 * 60 * 24) if 'value' in house['timeOnRedfin'].keys() else 'N/A'
-
-        # School info
-        school_data = self.driver.find_elements_by_css_selector('tr.schools-table-row')
-        schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in school_data[1:]]) if len(school_data) > 1 else 'N/A'
-
-        # Monthly expense info
-        try:
-            monthly_expense = self.driver.find_element_by_css_selector('div.CalculatorSummary > div.sectionText > p').get_attribute('textContent').replace('$', '').replace(' per month', '').replace(',', '')
-        except:
-            monthly_expense = 'N/A'
-
         year_build = house['yearBuilt']['value'] if 'yearBuilt' in house.keys() and 'value' in house['yearBuilt'].keys() else 'N/A'
         lot_size = house['lotSize']['value'] if 'lotSize' in house.keys() and 'value' in house['lotSize'].keys() else 'N/A'
         hoa = house['hoa']['value'] if 'value' in house['hoa'].keys() else 0
         sqft = house['sqFt']['value']
+
+        # School info
+        try:
+            school_data = self.driver.find_elements_by_css_selector('tr.schools-table-row')
+            schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in school_data[1:]]) if len(school_data) > 1 else 'N/A'
+        except:
+            schools = 'N/A'
+
+        # Monthly expense info
+        monthly_interest_rate = self.interest_rate/12
+        numerator = (float(listed_price)*self.borrowing_pct)*(monthly_interest_rate*((1 + monthly_interest_rate)**(self.mortgage_term_years*12)))
+        denominator = ((1+monthly_interest_rate)**(self.mortgage_term_years*12))-1
+        monthly_expense = numerator/denominator + hoa + self.insurance_cost/12
+
         self.housing_data[mls] = {
             "url": url,
             "street_address": street_address,
@@ -83,7 +95,7 @@ class Scraper(Scrape):
             "listed_price": listed_price,
             "beds": beds,
             "baths": baths,
-            "days_on_market": days_on_market,
+            "days_on_market": round(days_on_market),
             "schools": schools,
             "monthly_expense": monthly_expense,
             "year_build": year_build,
@@ -111,14 +123,15 @@ class Scraper(Scrape):
             ('address', full_address),
         )
 
-        try:
-            response = requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).json()
+        response = json.loads(requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).content.decode())
+
+        if 'property_stats' in response.keys():
             nightly_price = response['property_stats']['adr']['ltm']
             occupancy_rate = response['property_stats']['occupancy']['ltm']
             revenue = response['property_stats']['revenue']['ltm']
-            monthly_profit = float(revenue)/12 - float(monthly_expense)
-        except:
-            print(f'AirDNA connection failed for: {full_address}')
+            monthly_profit = round(float(revenue)/12 - float(monthly_expense), 2) if monthly_expense != 'N/A' else 'N/A'
+        else:
+            print(f'No AirDNA result for: {street_address}')
             nightly_price = 'N/A'
             occupancy_rate = 'N/A'
             revenue = 'N/A'

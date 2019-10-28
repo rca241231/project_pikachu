@@ -3,6 +3,11 @@ import multiprocessing
 from modules.RealEstateInfo import Scraper
 from markets import markets
 
+# Market Constants
+interest_rate = 0.04
+borrowing_pct = 0.8
+mortgage_term_years = 30
+insurance_cost = 1500
 
 def print_markets(markets):
     for market in markets.redfin_params_markets.keys():
@@ -12,10 +17,14 @@ def print_markets(markets):
 def connstruct_market_procs(markets):
     scrapers = [
         Scraper(
-            markets.employment_info[markets.redfin_params_markets[key]['state']],
-            markets.redfin_params_markets[key]['redfin_cookies'],
-            markets.redfin_params_markets[key]['redfin_headers'],
-            markets.redfin_params_markets[key]['redfin_params']
+            county_info=markets.employment_info[markets.redfin_params_markets[key]['state']],
+            redfin_cookies=markets.redfin_params_markets[key]['redfin_cookies'],
+            redfin_headers=markets.redfin_params_markets[key]['redfin_headers'],
+            redfin_params=markets.redfin_params_markets[key]['redfin_params'],
+            interest_rate=interest_rate,
+            borrowing_pct=borrowing_pct,
+            mortgage_term_years=mortgage_term_years,
+            insurance_cost=insurance_cost
         )
         for key in markets.redfin_params_markets.keys()
     ]
@@ -23,7 +32,7 @@ def connstruct_market_procs(markets):
 
 
 if __name__ == "__main__":
-    # Delete data to fresh document
+    # Delete data to refresh document
     try:
         os.remove('data.csv')
     except:

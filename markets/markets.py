@@ -1,8 +1,10 @@
 from modules.CountyEmployment import CountyInfo
 
+# Constants
 max_price = '1250000'
 beds = '5'
 baths = '3'
+homes = '10'
 
 class Markets():
     def __init__(self):
@@ -20,7 +22,7 @@ class Markets():
                     ('min_stories', '1'),
                     ('num_beds', beds),
                     ('num_baths', baths),
-                    ('num_homes', '10000'),
+                    ('num_homes', homes),
                     ('ord', 'redfin-recommended-asc'),
                     ('page_number', '1'),
                     ('region_id', '345,343,17151,303'),
@@ -90,7 +92,7 @@ class Markets():
                     ('min_stories', '1'),
                     ('num_beds', beds),
                     ('num_baths', baths),
-                    ('num_homes', '10000'),
+                    ('num_homes', homes),
                     ('ord', 'redfin-recommended-asc'),
                     ('page_number', '1'),
                     ('poly', '-118.84771 33.71914,-118.0203 33.71914,-118.0203 34.12368,-118.84771 34.12368,-118.84771 33.71914'),
@@ -150,7 +152,7 @@ class Markets():
 
 
 
-
-
+if __name__ == "__main__":
+    markets = Markets()
 
 
