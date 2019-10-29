@@ -1,17 +1,11 @@
 import requests
 import json
-import re
 import os
 import csv
 import multiprocessing
 
 from modules.Writer import Scrape
 from uszipcode import SearchEngine
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 
 class Scraper(Scrape):
@@ -37,11 +31,6 @@ class Scraper(Scrape):
         self.housing_data = {}
         self.data = []
         self.search = SearchEngine(simple_zipcode=True)
-        self.options = Options()
-        self.options.add_argument("--headless")
-        self.options.add_argument("--no-sandbox")
-        self.options.add_argument("--disable-dev-shm-usage")
-        self.driver = webdriver.Chrome(self.CHROME_DRIVER_PATH, options=self.options)
         self.air_dna_headers = {
             'Sec-Fetch-Mode': 'cors',
             'Referer': 'https://www.airdna.co/vacation-rental-data/app/us/california/union-city/rentalizer',
@@ -56,7 +45,6 @@ class Scraper(Scrape):
         return houses
 
     def get_redfin_data(self, url, mls, house):
-        self.driver.get(url)
         print(f"Getting data for {url}")
 
         # Get information from Redfin
@@ -76,19 +64,11 @@ class Scraper(Scrape):
         hoa = house['hoa']['value'] if 'value' in house['hoa'].keys() else 0
         sqft = house['sqFt']['value']
 
-        # School info
-        try:
-            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "schools-table-row")))
-            school_data = self.driver.find_elements_by_css_selector('tr.schools-table-row')
-            schools = '\n'.join([re.sub("(Parent Rating:)(.*)", '', info.get_attribute('textContent')).replace('homeGreatSchools', 'home GreatSchools').replace('SchoolPublic', 'School Public') for info in school_data[1:]]) if len(school_data) > 1 else 'N/A'
-        except:
-            schools = 'N/A'
-
         # Monthly expense info
         monthly_interest_rate = self.interest_rate/12
         numerator = (float(listed_price)*self.borrowing_pct)*(monthly_interest_rate*((1 + monthly_interest_rate)**(self.mortgage_term_years*12)))
         denominator = ((1+monthly_interest_rate)**(self.mortgage_term_years*12))-1
-        monthly_expense = numerator/denominator + hoa + self.insurance_cost/12
+        monthly_expense = round(numerator/denominator + hoa + self.insurance_cost/12, 2)
 
         self.housing_data[mls] = {
             "url": url,
@@ -100,7 +80,6 @@ class Scraper(Scrape):
             "beds": beds,
             "baths": baths,
             "days_on_market": round(days_on_market),
-            "schools": schools,
             "monthly_expense": monthly_expense,
             "year_build": year_build,
             "lot_size": lot_size,
@@ -132,18 +111,18 @@ class Scraper(Scrape):
         if 'property_stats' in response.keys():
             nightly_price = response['property_stats']['adr']['ltm']
             occupancy_rate = response['property_stats']['occupancy']['ltm']
-            revenue = response['property_stats']['revenue']['ltm']
-            monthly_profit = round(float(revenue)/12 - float(monthly_expense), 2)
+            monthly_revenue = round(response['property_stats']['revenue']['ltm']/12, 2)
+            monthly_profit = round(monthly_revenue - float(monthly_expense), 2)
         else:
             print(f'No AirDNA result for: {street_address}')
             nightly_price = 'N/A'
             occupancy_rate = 'N/A'
-            revenue = 'N/A'
+            monthly_revenue = 'N/A'
             monthly_profit = 'N/A'
 
         self.housing_data[mls]['nightly_price'] = nightly_price
         self.housing_data[mls]['occupancy_rate'] = occupancy_rate
-        self.housing_data[mls]['revenue'] = revenue
+        self.housing_data[mls]['monthly_revenue'] = monthly_revenue
         self.housing_data[mls]['monthly_profit'] = monthly_profit
 
 
@@ -188,8 +167,7 @@ class Scraper(Scrape):
                     "monthly_expense",
                     "nightly_price",
                     "occupancy_rate",
-                    "revenue",
-                    "schools",
+                    "monthly_revenue",
                     "employment_total_covered",
                     "twelve_month_change_pct",
                     "twelve_month_change",
@@ -215,8 +193,7 @@ class Scraper(Scrape):
                 self.housing_data[mls]['monthly_expense'],
                 self.housing_data[mls]['nightly_price'],
                 self.housing_data[mls]['occupancy_rate'],
-                self.housing_data[mls]['revenue'],
-                self.housing_data[mls]['schools'],
+                self.housing_data[mls]['monthly_revenue'],
                 self.housing_data[mls]['employment_total_covered'],
                 self.housing_data[mls]['twelve_month_change_pct'],
                 self.housing_data[mls]['twelve_month_change'],
@@ -255,5 +232,3 @@ class Scraper(Scrape):
 
         for proc in process:
             proc.join()
-
-        self.driver.quit()

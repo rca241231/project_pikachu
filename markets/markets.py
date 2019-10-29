@@ -4,7 +4,7 @@ from modules.CountyEmployment import CountyInfo
 max_price = '1250000'
 beds = '5'
 baths = '3'
-homes = '1000'
+homes = '5'
 
 class Markets():
     def __init__(self):
