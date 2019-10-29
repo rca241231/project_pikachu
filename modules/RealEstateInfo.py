@@ -30,6 +30,9 @@ class Scraper(Scrape):
         self.mortgage_term_years = mortgage_term_years
         self.housing_data = {}
         self.data = []
+        self.exception_counties = {
+            "King County": "Kings County",
+        }
         self.search = SearchEngine(simple_zipcode=True)
         self.air_dna_headers = {
             'Sec-Fetch-Mode': 'cors',
@@ -129,11 +132,15 @@ class Scraper(Scrape):
     def get_local_data(self, mls):
         zip_code = self.housing_data[mls]['zip_code']
         county = self.search.by_zipcode(zip_code).county
-        employment_total_covered = self.county_info[county]['employment_total_covered']  if county in self.county_info.keys() else 'N/A'
-        twelve_month_change_pct = self.county_info[county]['twelve_month_change_pct'] if county in self.county_info.keys() else 'N/A'
-        twelve_month_change = self.county_info[county]['twelve_month_change'] if county in self.county_info.keys() else 'N/A'
-        avg_weekly_salary = self.county_info[county]['avg_weekly_salary'] if county in self.county_info.keys() else 'N/A'
-        avg_weekly_12mo_change_salary = self.county_info[county]['avg_weekly_12mo_change_salary'] if county in self.county_info.keys() else 'N/A'
+        if county in self.exception_counties.keys():
+            county =  self.exception_counties[county]
+
+        state = self.housing_data[mls]['state']
+        employment_total_covered = self.county_info[state][county]['employment_total_covered']  if county in self.county_info[state].keys() else 'N/A'
+        twelve_month_change_pct = self.county_info[state][county]['twelve_month_change_pct'] if county in self.county_info[state].keys() else 'N/A'
+        twelve_month_change = self.county_info[state][county]['twelve_month_change'] if county in self.county_info[state].keys() else 'N/A'
+        avg_weekly_salary = self.county_info[state][county]['avg_weekly_salary'] if county in self.county_info[state].keys() else 'N/A'
+        avg_weekly_12mo_change_salary = self.county_info[state][county]['avg_weekly_12mo_change_salary'] if county in self.county_info[state].keys() else 'N/A'
 
         self.housing_data[mls]['employment_total_covered'] = employment_total_covered
         self.housing_data[mls]['twelve_month_change_pct'] = twelve_month_change_pct

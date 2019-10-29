@@ -4,13 +4,14 @@ from modules.CountyEmployment import CountyInfo
 max_price = '1250000'
 beds = '5'
 baths = '3'
-homes = '5'
+homes = '10'
 
 class Markets():
     def __init__(self):
         self.county = CountyInfo()
         self.employment_info = {
-            'CA': self.county.get_employment_info("https://beta.bls.gov/maps/cew/CA?industry=10&geo_id=06000&chartData=3&distribution=Quantiles&pos_color=blue&neg_color=orange&showHideChart=show&ownerType=0")
+            'CA': self.county.get_employment_info('CA'),
+            'WA': self.county.get_employment_info('WA'),
         }
         self.redfin_params_markets = {
             'NorCal': {
@@ -147,6 +148,78 @@ class Markets():
                     'fbsr_161006757273279': '7ApZMFj4bouqBCIIinad-XqC8ZhB-3ZzRR_tw07HzSo.eyJ1c2VyX2lkIjoiNTA0NDMzNzY1IiwiY29kZSI6IkFRQ3o3UEJSUVgzTXpUaWhMbUJLeEZEMnNWcUZGdzl0RzJwQlVzWmFDTDhaaWxwZW1nejQtRkktaWQ4WnJRd1otdm1xQkZkVG0wRmRtLWk2TUE3UUlhMEM4bTlOUW4wTzYxanl2SVBWLURrSzBJeDVkUTY0cm9PRVNKVkNma0o0U2lJa2daMERXN3ZROG8yLU9VcW1FTUNlVnhXZVAxT092dnRzUG80Q3lSOF9YSTV1cFJHX2tGdklnYVQyYzBpYk8td196SmFXbVY3bFhIQjdkVU9ZZ3I4Q3BLWGFGWVFCOXNubHhuVG9rNmpiRXFPaGlqNHNNcXVveWhDd2NnUkg2Ymo2OGpFdmNyZnRrY2lJZlplbXBsNXNRQlRteDlOVmtzbUpoVnhNbV9UTDhfLTd1VlRaWE12VE41VThYeW9ZN3BjbElOQ2taWjVOR1Q1VzNHS0pjeXRsIiwib2F1dGhfdG9rZW4iOiJFQUFDU2IwNlMzcjhCQUxMZHZDVm1lR2s4ZmFONmZpWkFzOW14cUQ2dXcwaGhlbUR3cmEzN1pBbFIwWkFGc3BlNnlCUVFDR0VobXdaQjhiNW1mMUhmWkFZa1NrUlhLVGZSWkNVQjlPSEtsUlpBZ2phZk9tWkN3dGtUQXFlNmhCN0R5bXYxd1pCeFpDMGtqYXFxWWEycE4xNFpDSEhhOXRFcVdLbks5c0lkb0x2WHIxakpQcmRnQ0dKM2VZRWRVUHpZY2R1ZWFoZ2lJY1BjUWdzSEFSTFVtSFZoNjN6IiwiYWxnb3JpdGhtIjoiSE1BQy1TSEEyNTYiLCJpc3N1ZWRfYXQiOjE1NzE4MTQ1MDZ9',
                     '__utmxx': '222895640.DPiVULlyQUmf2VSSZa1iIg$0:1571814507:8035200.Y2CmQl1SEm4efihwuTldA$0:1571807409:8035200:.cr1AtTjKTP2VQs80cLw4Lw$0:1571807409:8035200:.HPaeM5zMSp-5hxCpNhjEDg$0:1571807409:8035200:',
                 }
+            },
+            'Seattle': {
+                'state': 'WA',
+                'redfin_cookies': {
+                    'RF_BROWSER_ID': '0p30zjCWSwamY2Y68psP2g',
+                    '_gcl_au': '1.1.2133428028.1568202210',
+                    '_ga': 'GA1.2.1022811260.1568202210',
+                    '_fbp': 'fb.1.1568202210397.1621431309',
+                    'RF_BROWSER_CAPABILITIES': '%7B%22css-transitions%22%3Atrue%2C%22css-columns%22%3Atrue%2C%22css-generated-content%22%3Atrue%2C%22css-opacity%22%3Atrue%2C%22events-touch%22%3Afalse%2C%22geolocation%22%3Atrue%2C%22screen-size%22%3A4%2C%22screen-size-tiny%22%3Afalse%2C%22screen-size-small%22%3Afalse%2C%22screen-size-medium%22%3Afalse%2C%22screen-size-large%22%3Afalse%2C%22screen-size-huge%22%3Atrue%2C%22html-prefetch%22%3Afalse%2C%22html-range%22%3Atrue%2C%22html-form-validation%22%3Atrue%2C%22html-form-validation-with-required-notice%22%3Atrue%2C%22html-input-placeholder%22%3Atrue%2C%22html-input-placeholder-on-focus%22%3Atrue%2C%22ios-app-store%22%3Afalse%2C%22google-play-store%22%3Afalse%2C%22ios-web-view%22%3Afalse%2C%22android-web-view%22%3Afalse%2C%22activex-object%22%3Atrue%2C%22webgl%22%3Atrue%2C%22history%22%3Atrue%2C%22localstorage%22%3Atrue%2C%22sessionstorage%22%3Atrue%2C%22position-fixed-workaround%22%3Afalse%2C%22passive-event-listener%22%3Atrue%7D',
+                    'fbm_161006757273279': 'base_domain=.redfin.com',
+                    'G_ENABLED_IDPS': 'google',
+                    'cto_lwid': '2d48b00a-63b7-4c77-905f-853d18a685d0',
+                    'RF_LAST_USER_ACTION': '1568655402939%3A25efc1ddb5192b42547849af36e94d3217ccd7b0',
+                    'RF_PARTY_ID': '4293663',
+                    'RF_AUTH': 'f8bf844320ec910ff506452a14b938af130a2b52',
+                    'RF_W_AUTH': 'f8bf844320ec910ff506452a14b938af130a2b52',
+                    'RF_SECURE_AUTH': 'baf068aafd5bd27ea5bfdb76787d50f93041a4f5',
+                    'RF_ACCESS_LEVEL': '3',
+                    'JSESSIONID': '75782B91CE65C1E0A8B38F3E847FD2DA',
+                    'RF_LAST_ACCESS': '1568667669596%3Af103da7bc35b8a2ac6a8074d8ad38e4899233679',
+                    'iterableEndUserId': 'richard.chen.1989%40gmail.com',
+                    'ki_t': '1568667574824%3B1568742825233%3B1568742839424%3B2%3B9',
+                    'wordpress_google_apps_login': '0773eaff0ed0398ef402932f31099093',
+                    '__utmx': '222895640.WTKnaAxUS8WuBy9wsrWkyg$0:1.uxw2gydsRRWC574IItzZJA$0:0.RTV_wZVsTh-aCSuerdlYSQ$0:1.Y2CmQl1SEm4efihwuTldA$0:0.DPiVULlyQUmf2VSSZa1iIg$0:0.HPaeM5zMSp-5hxCpNhjEDg$0:0.Be2giBqURYSxBB66d5SfcQ$0:1',
+                    'RF_BID_UPDATED': '1',
+                    'RF_BUSINESS_MARKET': '2',
+                    'RF_LISTING_VIEWS': '113565148.113494147.112714990.113527610.113544703.113576826.110406641.113555785.113530710.111950871.109387561.103018454.110335819.106706144.112874388.112907610.84798458.27753221.64681924.112118664',
+                    'RF_CORVAIR_LAST_VERSION': '286.0.0',
+                    'AKA_A2': 'A',
+                    'AMP_TOKEN': '%24NOT_FOUND',
+                    '_gid': 'GA1.2.1327225334.1572388319',
+                    'nhfy_badgecount': '20',
+                    'unifiedLastSearch': 'name%3DSeattle%26subName%3DSeattle%252C%2520WA%252C%2520USA%26url%3D%252Fcity%252F16163%252FWA%252FSeattle%26id%3D9_16163%26type%3D2%26isSavedSearch%3D%26countryCode%3DUS',
+                    'RF_MARKET': 'seattle',
+                    'RF_LAST_SEARCHED_CITY': 'Seattle',
+                    '_dc_gtm_UA-294985-1': '1',
+                    'RF_VISITED': 'null',
+                    'userPreferences': 'parcels%3Dtrue%26schools%3Dfalse%26mapStyle%3Ds%26statistics%3Dtrue%26agcTooltip%3Dfalse%26agentReset%3Dfalse%26ldpRegister%3Dfalse%26afCard%3D2%26schoolType%3D0%26lastSeenLdp%3DnoSharedSearchCookie%26viewedSwipeableHomeCardsDate%3D1572388388617',
+                    '_gat_UA-294985-1': '1',
+                    'fbsr_161006757273279': 'OwXWkt3-H18VnDp0wC8WPRHwT3OFd-Q3-Xl9dMvCQzY.eyJ1c2VyX2lkIjoiNTA0NDMzNzY1IiwiY29kZSI6IkFRQmZaaTcwTWN3OEtuOTdyaXlpWUE3d3QyWEF2YkhuNEIxb0htQWNwVmJ5M3ZlQTViSGhUNE9fRGxfd2NpaEd5X19hNk5YdjlncTBmb1JZS015RWRDOTJtenBna1QwMm9FeGZiNGMySlF0VGVhZndQbHpFQlp6WkpXb2pjTTU5dmo5VmRRbllNQzFhcnl0Snd0ZUdRb2Noa2lIVS1jQTJWbEZmOTNCWWtnN3dxS0Rzb1FKUzJ1WHVVVFRIZXpBYk1mekhfVHI3WEFVRzVuUkEyQ1RzaHplblVPQUVKWDVVM016ZThVbE9nMGM5VDBLYjJGYTF1dUppZ3kyV0R1R0tzUU11RWlLeG9td2JES1lYRzhydGJmSXJHMVNLQVR5Y3NfVmdRNWRGRG5KbWtJVmRoQThmZVYzSEcwd3hVbE1ma2pYYmdKMkxwaVE4N3VLZzNaeTJnaVkwdzg2WWxWTThya0RDS1FQNERTUkZSdmRmTEJPdXFHOG9KcDdjUEpXX0FpOCIsIm9hdXRoX3Rva2VuIjoiRUFBQ1NiMDZTM3I4QkFEQVFjeklZQ1dnc3ltUW1qY2JCbW9kalhiRkRaQ3lBb0d2NjJTVU9KbnRMQ0FaQTFqcHh4dndOMlRiRXZPM2pmNUxibmFaQ2YyZnROQnR6d3RoSmVMd1ZuSjZiQTFuZWR5WkIwOWdRckpNdkVKdE82eHY1dmNvT0JFb0tHYzVST2FZOUFITUEwcDhVWkM5bkVOY0k5bkJxTlZ2OUhrWkIxZEw1TzFsOHBaQkhZME85YkRrNEFNOFJHQ1ZVR3RFNk9qalNSSGVHTjJGIiwiYWxnb3JpdGhtIjoiSE1BQy1TSEEyNTYiLCJpc3N1ZWRfYXQiOjE1NzIzODgzODh9',
+                    '__utmxx': '222895640.WTKnaAxUS8WuBy9wsrWkyg$0:1571278253:8035200:.uxw2gydsRRWC574IItzZJA$0:1568202211:8035200:.RTV_wZVsTh-aCSuerdlYSQ$0:1568742846:8035200:.Y2CmQl1SEm4efihwuTldA$0:1572291354:8035200:.DPiVULlyQUmf2VSSZa1iIg$0:1572388389:8035200.HPaeM5zMSp-5hxCpNhjEDg$0:1572290885:8035200:.Be2giBqURYSxBB66d5SfcQ$0:1570826559:8035200:',
+                },
+                'redfin_headers': {
+                    'sec-fetch-mode': 'cors',
+                    'x-newrelic-id': 'VQMDUFFaGwQJU1hSBAc=',
+                    'dnt': '1',
+                    'accept-encoding': 'gzip, deflate, br',
+                    'accept-language': 'en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7',
+                    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
+                    'accept': '*/*',
+                    'referer': 'https://www.redfin.com/city/16163/WA/Seattle/filter/max-price=1.25M,min-beds=5,min-baths=3',
+                    'authority': 'www.redfin.com',
+                    'sec-fetch-site': 'same-origin',
+                },
+                'redfin_params': (
+                    ('al', '3'),
+                    ('market', 'seattle'),
+                    ('max_price', max_price),
+                    ('min_stories', '1'),
+                    ('num_baths', baths),
+                    ('num_beds', beds),
+                    ('num_homes', homes),
+                    ('ord', 'redfin-recommended-asc'),
+                    ('page_number', '1'),
+                    ('region_id', '16163'),
+                    ('region_type', '6'),
+                    ('sf', '1,2,3,5,6,7'),
+                    ('start', '0'),
+                    ('status', '1'),
+                    ('uipt', '1,2,3,4,5,6'),
+                    ('v', '8'),
+                )
             }
         }
 
