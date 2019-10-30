@@ -82,7 +82,7 @@ class Scraper(Scrape):
             "listed_price": listed_price,
             "beds": beds,
             "baths": baths,
-            "days_on_market": round(days_on_market),
+            "days_on_market": round(days_on_market) if isinstance(days_on_market, float) else 'N/A',
             "monthly_expense": monthly_expense,
             "year_build": year_build,
             "lot_size": lot_size,
@@ -109,14 +109,13 @@ class Scraper(Scrape):
             ('address', full_address),
         )
 
-        response = json.loads(requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).content.decode())
-
-        if 'property_stats' in response.keys():
+        try:
+            response = json.loads(requests.get('https://api.airdna.co/v1/market/estimate', headers=self.air_dna_headers, params=params).content.decode())
             nightly_price = response['property_stats']['adr']['ltm']
             occupancy_rate = response['property_stats']['occupancy']['ltm']
             monthly_revenue = round(response['property_stats']['revenue']['ltm']/12, 2)
             monthly_profit = round(monthly_revenue - float(monthly_expense), 2)
-        else:
+        except:
             print(f'No AirDNA result for: {street_address}')
             nightly_price = 'N/A'
             occupancy_rate = 'N/A'
