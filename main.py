@@ -17,6 +17,7 @@ def print_markets(markets):
 def connstruct_market_procs(markets):
     scrapers = [
         Scraper(
+            region=markets.redfin_params_markets[key]['region'],
             county_info=markets.employment_info[markets.redfin_params_markets[key]['state']],
             redfin_cookies=markets.redfin_params_markets[key]['redfin_cookies'],
             redfin_headers=markets.redfin_params_markets[key]['redfin_headers'],

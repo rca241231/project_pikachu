@@ -4,12 +4,14 @@ import os
 import csv
 import multiprocessing
 
+from random import randint
 from modules.Writer import Scrape
 from uszipcode import SearchEngine
 
 
 class Scraper(Scrape):
     def __init__(self,
+                 region,
                  county_info,
                  redfin_cookies,
                  redfin_headers,
@@ -20,6 +22,7 @@ class Scraper(Scrape):
                  insurance_cost
                  ):
         Scrape.__init__(self)
+        self.region = region
         self.insurance_cost = insurance_cost
         self.county_info = county_info
         self.interest_rate = interest_rate
@@ -41,6 +44,12 @@ class Scraper(Scrape):
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
             'DNT': '1',
         }
+        self.air_dna_access_token = [
+            'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375',
+            'ODkwMTc|478ce2c743244a7eb3d1cfddc14909b3',
+            'MjA2Mjcw|69e663b4c51c4830a8bde0d3355be8ee',
+            'MjA2Mjcz|e35b14ebfb794d849f9484afcffced1d'
+        ]
 
     def get_all_redfin_listings(self):
         response = json.loads(requests.get('https://www.redfin.com/stingray/api/gis', headers=self.redfin_headers, params=self.redfin_params, cookies=self.redfin_cookies).text.replace('{}&&', ''))
@@ -100,7 +109,7 @@ class Scraper(Scrape):
         monthly_expense = self.housing_data[mls]['monthly_expense']
         full_address = f'{street_address}, {city}, {state}, USA'
         params = (
-            ('access_token', 'MjkxMTI|8b0178bf0e564cbf96fc75b8518a5375'),
+            ('access_token', self.air_dna_access_token[randint(0, 3)]),
             ('city_id', '59193'),
             ('accommodates', '6'),
             ('bathrooms', str(baths)[0] if baths != 'N/A' else baths),
@@ -116,7 +125,7 @@ class Scraper(Scrape):
             monthly_revenue = round(response['property_stats']['revenue']['ltm']/12, 2)
             monthly_profit = round(monthly_revenue - float(monthly_expense), 2)
         except:
-            print(f'No AirDNA result for: {street_address}')
+            print(f'No AirDNA result for: {full_address}')
             nightly_price = 'N/A'
             occupancy_rate = 'N/A'
             monthly_revenue = 'N/A'
@@ -157,6 +166,7 @@ class Scraper(Scrape):
             if writerrow_top:
                 # Header
                 writer.writerow([
+                    "region",
                     "url",
                     "street_address",
                     "days_on_market",
@@ -183,6 +193,7 @@ class Scraper(Scrape):
                 ])
 
             writer.writerow([
+                self.region,
                 self.housing_data[mls]['url'],
                 self.housing_data[mls]['street_address'],
                 self.housing_data[mls]['days_on_market'],
