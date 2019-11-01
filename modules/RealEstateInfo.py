@@ -124,8 +124,8 @@ class Scraper(Scrape):
             occupancy_rate = response['property_stats']['occupancy']['ltm']
             monthly_revenue = round(response['property_stats']['revenue']['ltm']/12, 2)
             monthly_profit = round(monthly_revenue - float(monthly_expense), 2)
-        except:
-            print(f'No AirDNA result for: {full_address}')
+        except Exception as e:
+            print(f'No AirDNA result for {full_address} because: {e}')
             nightly_price = 'N/A'
             occupancy_rate = 'N/A'
             monthly_revenue = 'N/A'
