@@ -721,9 +721,9 @@ class Markets():
             'Miami': {
                 'region': 'Miami',
                 'state': 'FL',
-                'redfin_params': (
+                'redfin_params':  (
                     ('al', '3'),
-                    ('market', 'louisiana'),
+                    ('market', 'sanantonio'),
                     ('max_price', max_price),
                     ('min_stories', '1'),
                     ('num_baths', baths),
@@ -747,7 +747,7 @@ class Markets():
                     'accept': '*/*',
                     'sec-fetch-site': 'same-origin',
                     'sec-fetch-mode': 'cors',
-                    'referer': 'https://www.redfin.com/city/30756/GA/Atlanta/filter/max-price=1.25M,min-beds=5,min-baths=3,viewport=33.83059:33.6593:-84.01296:-84.67558',
+                    'referer': 'https://www.redfin.com/city/11458/FL/Miami/filter/max-price=1.25M,max-beds=5,min-baths=3,viewport=25.87187:25.68637:-79.89709:-80.55971,no-outline',
                     'accept-encoding': 'gzip, deflate, br',
                     'accept-language': 'en-US,en;q=0.9,zh-TW;q=0.8,zh;q=0.7',
                 },
@@ -781,13 +781,13 @@ class Markets():
                     '_gid': 'GA1.2.1538537877.1572987191',
                     'nhfy_badgecount': '20',
                     'RF_VISITED': 'null',
-                    'userPreferences': 'parcels%3Dtrue%26schools%3Dfalse%26mapStyle%3Ds%26statistics%3Dtrue%26agcTooltip%3Dfalse%26agentReset%3Dfalse%26ldpRegister%3Dfalse%26afCard%3D2%26schoolType%3D0%26lastSeenLdp%3DnoSharedSearchCookie%26viewedSwipeableHomeCardsDate%3D1572987490916',
-                    'RF_LAST_SEARCHED_CITY': 'New%20Orleans',
-                    'fbsr_161006757273279': '0p04axmRgjzIVwX1GWsn5eFhd1mhVETHQgUFTuZmyfU.eyJ1c2VyX2lkIjoiNTA0NDMzNzY1IiwiY29kZSI6IkFRQWVpQlZWQzB6aHg1T0VKU1BMejlDb2ZzUFFUWFZ2V09EdHMwOHNCUnNMTnF4d2pndGF6LWNHYzBkTU9BOG1wdFlENXZqa2pJOVZMTU9NcXdVUURReVJfc1ZJM0R5OFNTUVlyT0RmUEViSndoTGhpakV2Qml0cWQ5enRpX18wS0JhTDYwRFZGOG9Wa1RxZHpNMWtnQUhzVFRyTEI3UlBlNHA1aHMtV3RBd3F0SHFDVHR1OThpVElmdzc1S2RMYjlsdXN4VEppOGZzRnEwR2hHM29wZE1rRkNoQmNKcTl0Ni02Tkk3VUNRaEpVNGozeE12TF9TTFFOcHdZMlQ5ZVZOWm1sbm1sWGpZRUpNQThzOHMxbkxaeEs5RGFiekNISVNzbjgyX1BqS29oakV2dUJteXRHektiS3g2RXpzcDVad3k5ZnRUczlSSTlfeXBReUpTY1R3Z2U0U2o0U0dWVjhDSks2V05aTUZ3VnhLdmVSVDYxNWo5TG1DcDlxQnNTRW5UayIsIm9hdXRoX3Rva2VuIjoiRUFBQ1NiMDZTM3I4QkFBUkVzR0JOZWFQbE9wU0R5OHJyTkJhV2FESkZYM2daQzlMWkNhUzRGUXN6VkJJeWtaQ3IwSThRaGRHVjNVcWpyb0RTWkNXM3llYnVOMkN2WW9tVHVpMnJTc3I2Ykw3cXlSSWVmQzJzSHpmQ1BQN0VWRTA1ZkoyRFZWaUNSRTFSdEY5WVVNQ1NnaGFGRUloUzlMampsdVpDNkdBaXBEVGYwUDQyQ3RLa25sRmJJUnczMTAzWVJHcmZOampEN3FzVVpDMWJ2TFg3UkMiLCJhbGdvcml0aG0iOiJITUFDLVNIQTI1NiIsImlzc3VlZF9hdCI6MTU3Mjk4NzQ5MX0',
-                    '__utmxx': '222895640.WTKnaAxUS8WuBy9wsrWkyg$0:1571278253:8035200:.uxw2gydsRRWC574IItzZJA$0:1568202211:8035200:.RTV_wZVsTh-aCSuerdlYSQ$0:1568742846:8035200:.Y2CmQl1SEm4efihwuTldA$0:1572468244:8035200:.DPiVULlyQUmf2VSSZa1iIg$0:1572987491:8035200.HPaeM5zMSp-5hxCpNhjEDg$0:1572290885:8035200:.Be2giBqURYSxBB66d5SfcQ$0:1570826559:8035200:',
-                    'RF_MARKET': 'louisiana',
+                    'userPreferences': 'parcels%3Dtrue%26schools%3Dfalse%26mapStyle%3Ds%26statistics%3Dtrue%26agcTooltip%3Dfalse%26agentReset%3Dfalse%26ldpRegister%3Dfalse%26afCard%3D2%26schoolType%3D0%26lastSeenLdp%3DnoSharedSearchCookie%26viewedSwipeableHomeCardsDate%3D1572989550925',
+                    'RF_LAST_SEARCHED_CITY': 'San%20Antonio',
+                    'fbsr_161006757273279': 'hce7tq2D-RdIK8m6w9cHHVfNnEL2bLfiWt7QI-ff8eo.eyJ1c2VyX2lkIjoiNTA0NDMzNzY1IiwiY29kZSI6IkFRRF9XVHZVNDg1QXI5QjJGbW1GQkFJcEVnT2tZbUhWSW05RWZDUzRlbGlZNnlKa19Sc0Y0dUdhOXJWSGEtdkp4cGV5Mmlhc19iTE1nR0dTMnNOSWRpWjRmR1Z2VVZwdVhlblZVakVqUWg2d2p4QVhRNE16NVdZVTh0VXA4ZWRTaXQ4SXNqdHdfampDV1pGN2p4RWhzbzY5amlpcUJ2UXljUm93TDR2czJfaWNYZkYzeGFzRFd6anZ5YW91NTdTSjdTYjlzYUhLNzdrQXJFeV96M1pPNkYwVkRNbm90cUFvYmx2alpVRHZMQlBQaEdOdWNVNEFBbkcyemVYVDRvR2M2Q3M0SU5OVlBrSkpFdzlkOHREQjZRMmV4c0pRNmlsdzNLMFVVTlRiZVV0VFlOMHpyeHFHZEMyTkI2MF9ta3Q5UWNmWDN1am45Vjh6cFZtMDhqeUJzSGJVcC1SVXplbm5Tdm91OHB6WlFMSC1zZS1sZGV0aXF1QTRwTDdLLUlEREhFYyIsIm9hdXRoX3Rva2VuIjoiRUFBQ1NiMDZTM3I4QkFJRHBMRmdBMmRSdmV2RnU5NVZ1Z3JBempzNXVSbEk3VGdXQ09ZTkNsWkNpM1BEU25SME9uaXNyaE1kRXBsdTdIZU5aQjVZYmQ2elhKelpCWkNKZDFaQlhuWU1jSlU1MnU4cVpBT1VqNHRkME5KcEdaQ0JEeTlFNTRaQlJSbmVaQ2hJc1I1dGFrbXRYRXNmM1g4QUxvdndOVlhwcVFobnZ5bkFwWkNKOUZaQXpRZWlHc0p6ZEE5dmhvZWFDb0hMc1NDQndNbnBPaTlUQXd4UiIsImFsZ29yaXRobSI6IkhNQUMtU0hBMjU2IiwiaXNzdWVkX2F0IjoxNTcyOTg5NTUxfQ',
+                    '__utmxx': '222895640.WTKnaAxUS8WuBy9wsrWkyg$0:1571278253:8035200:.uxw2gydsRRWC574IItzZJA$0:1568202211:8035200:.RTV_wZVsTh-aCSuerdlYSQ$0:1568742846:8035200:.Y2CmQl1SEm4efihwuTldA$0:1572468244:8035200:.DPiVULlyQUmf2VSSZa1iIg$0:1572989551:8035200.HPaeM5zMSp-5hxCpNhjEDg$0:1572290885:8035200:.Be2giBqURYSxBB66d5SfcQ$0:1570826559:8035200:',
+                    'RF_MARKET': 'sanantonio',
                     '_gat_UA-294985-1': '1',
-                    'unifiedLastSearch': 'name%3DAtlanta%26subName%3DAtlanta%252C%2520GA%252C%2520USA%26url%3D%252Fcity%252F30756%252FGA%252FAtlanta%26id%3D9_30756%26type%3D2%26isSavedSearch%3D%26countryCode%3DUS',
+                    'unifiedLastSearch': 'name%3DMiami%26subName%3DMiami%252C%2520FL%252C%2520USA%26url%3D%252Fcity%252F11458%252FFL%252FMiami%26id%3D9_11458%26type%3D2%26isSavedSearch%3D%26countryCode%3DUS',
                 }
             },
             'Dallas': {
