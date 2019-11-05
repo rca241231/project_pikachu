@@ -11,13 +11,21 @@ insurance_cost = 1500
 
 # TODO: Change markets if needed
 MARKETS = [
-    'SoCal',
+    # 'SoCal',
     # 'Seattle',
     # 'Nashville',
     # 'New Orleans',
     # 'NorCal',
     # 'Asheville',
-    # 'Orlando'
+    'Orlando',
+    # 'San Antonio',
+    # 'Dallas',
+    # 'Miami',
+    # 'Atlanta',
+    # 'Denver',
+    # 'Fort Lauderdale',
+    # 'Boston',
+    # 'Philadelphia'
 ]
 
 def print_markets(markets):
