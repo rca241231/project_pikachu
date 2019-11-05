@@ -9,9 +9,21 @@ borrowing_pct = 0.8
 mortgage_term_years = 30
 insurance_cost = 1500
 
+# TODO: Change markets if needed
+MARKETS = [
+    'SoCal',
+    # 'Seattle',
+    # 'Nashville',
+    # 'New Orleans',
+    # 'NorCal',
+    # 'Asheville',
+    # 'Orlando'
+]
+
 def print_markets(markets):
     for market in markets.redfin_params_markets.keys():
-        print(f"Getting information for {market}, {markets.redfin_params_markets[market]['state']}")
+        if market in MARKETS:
+            print(f"Getting information for {market}, {markets.redfin_params_markets[market]['state']}")
 
 
 def connstruct_market_procs(markets):
@@ -28,6 +40,7 @@ def connstruct_market_procs(markets):
             insurance_cost=insurance_cost
         )
         for key in markets.redfin_params_markets.keys()
+        if key in MARKETS
     ]
     return scrapers
 

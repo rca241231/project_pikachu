@@ -3,7 +3,7 @@ import json
 import os
 import csv
 import multiprocessing
-
+from time import sleep
 from random import randint
 from modules.Writer import Scrape
 from uszipcode import SearchEngine
@@ -74,7 +74,7 @@ class Scraper(Scrape):
         year_build = house['yearBuilt']['value'] if 'yearBuilt' in house.keys() and 'value' in house['yearBuilt'].keys() else 'N/A'
         lot_size = house['lotSize']['value'] if 'lotSize' in house.keys() and 'value' in house['lotSize'].keys() else 'N/A'
         hoa = house['hoa']['value'] if 'value' in house['hoa'].keys() else 0
-        sqft = house['sqFt']['value']
+        sqft = house['sqFt']['value'] if 'value' in house['sqFt'].keys() else 'N/A'
 
         # Monthly expense info
         monthly_interest_rate = self.interest_rate/12
@@ -125,7 +125,7 @@ class Scraper(Scrape):
             monthly_revenue = round(response['property_stats']['revenue']['ltm']/12, 2)
             monthly_profit = round(monthly_revenue - float(monthly_expense), 2)
         except Exception as e:
-            print(f'No AirDNA result for {full_address} because: {e}')
+            print(f'No AirDNA result for {full_address}.')
             nightly_price = 'N/A'
             occupancy_rate = 'N/A'
             monthly_revenue = 'N/A'
